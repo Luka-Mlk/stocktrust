@@ -35,6 +35,13 @@ func NewHRecord(o ...Option) (*HRecord, error) {
 	return r, nil
 }
 
+func WithDate(date string) Option {
+	return func(h *HRecord) error {
+		h.Date = date
+		return nil
+	}
+}
+
 func WithTicker(tkr string) Option {
 	return func(h *HRecord) error {
 		h.Ticker = tkr
