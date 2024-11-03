@@ -9,7 +9,7 @@ type HRecordList struct {
 	Length  int
 	Records []hrecord.HRecord
 
-	persistances []Persistence
+	persistences []Persistence
 }
 
 type Persistence interface {
@@ -38,8 +38,23 @@ func WithHRecord(r *hrecord.HRecord) HRLParam {
 	}
 }
 
+func WithPersistence(ps Persistence) HRLParam {
+	return func(h *HRecordList) error {
+		h.persistences = append(h.persistences, ps)
+		return nil
+	}
+}
+
+func (hrl *HRecordList) Append(h hrecord.HRecord) {
+	hrl.Records = append(hrl.Records, h)
+}
+
+func (hrl *HRecordList) AppendHRL(h HRecordList) {
+	hrl.Records = append(hrl.Records, h.Records...)
+}
+
 func (hl *HRecordList) Save() error {
-	for _, persistence := range hl.persistances {
+	for _, persistence := range hl.persistences {
 		err := persistence.Save(*hl)
 		if err != nil {
 			log.Println(err)
