@@ -3,17 +3,21 @@ package company
 import "log"
 
 type Company struct {
-	Name     string
-	Address  string
-	City     string
-	Country  string
-	Email    string
-	Website  string
-	Contact  string
-	Phone    string
-	Fax      string
-	Prospect string
-	Ticker   string
+	Name         string
+	Image        string
+	Address      string
+	City         string
+	Country      string
+	Email        string
+	Website      string
+	ContactName  string
+	ContactPhone string
+	ContactEmail string
+	Phone        string
+	Fax          string
+	Prospect     string
+	Ticker       string
+	URL          string
 
 	persistences []Persistence
 }
@@ -39,6 +43,13 @@ func NewCompany(o ...Option) (*Company, error) {
 func WithName(name string) Option {
 	return func(c *Company) error {
 		c.Name = name
+		return nil
+	}
+}
+
+func WithImage(img string) Option {
+	return func(c *Company) error {
+		c.Image = img
 		return nil
 	}
 }
@@ -78,9 +89,23 @@ func WithWebsite(website string) Option {
 	}
 }
 
-func WithContact(contact string) Option {
+func WithContactName(name string) Option {
 	return func(c *Company) error {
-		c.Contact = contact
+		c.ContactName = name
+		return nil
+	}
+}
+
+func WithContactPhone(phone string) Option {
+	return func(c *Company) error {
+		c.ContactPhone = phone
+		return nil
+	}
+}
+
+func WithContactEmail(email string) Option {
+	return func(c *Company) error {
+		c.ContactEmail = email
 		return nil
 	}
 }
@@ -109,6 +134,20 @@ func WithProspect(prospect string) Option {
 func WithTicker(ticker string) Option {
 	return func(c *Company) error {
 		c.Ticker = ticker
+		return nil
+	}
+}
+
+func WithURL(url string) Option {
+	return func(c *Company) error {
+		c.URL = url
+		return nil
+	}
+}
+
+func WithPersistence(ps Persistence) Option {
+	return func(h *Company) error {
+		h.persistences = append(h.persistences, ps)
 		return nil
 	}
 }
