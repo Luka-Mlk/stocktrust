@@ -4,7 +4,7 @@
 
 CREATE TABLE IF NOT EXISTS public.companies
 (
-	created TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+	created TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     id character varying(20) COLLATE pg_catalog."default" NOT NULL,
     name character varying(100) COLLATE pg_catalog."default",
     address character varying(128) COLLATE pg_catalog."default",

@@ -17,7 +17,6 @@ func Init() error {
 		return err
 	}
 	// update function call here? on history
-	// var cl []*company.Company
 	for _, tkr := range tkrs {
 		// if tkrmem[tkr] exist run update from it's value
 		// check if current ticker is in the slice
@@ -26,10 +25,6 @@ func Init() error {
 		_, err := getCompanyFromTicker(tkr)
 		if err != nil {
 			continue
-			// log.Println(err)
-			// debug.PrintStack()
-			// return err
-			// cl = append(cl, company)
 		}
 		_, err = getHrListForTicker(tkr)
 		if err != nil {
