@@ -7,14 +7,14 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"runtime/debug"
 	"stocktrust/pkg/hrecord"
 	"stocktrust/pkg/hrecordlist"
-	"strconv"
+	hrecfmt "stocktrust/pkg/strings/formatter/hrecord"
 	"strings"
 	"time"
 
 	"github.com/gocolly/colly"
-	"github.com/k0kubun/pp"
 )
 
 func getHrListForTicker(tkr string) (*hrecordlist.HRecordList, error) {
@@ -22,7 +22,7 @@ func getHrListForTicker(tkr string) (*hrecordlist.HRecordList, error) {
 	ctyp := "application/x-www-form-urlencoded"
 	cdate := time.Now()
 	data := url.Values{}
-	for i := 0; i < 11; i++ {
+	for i := 0; i < 1; i++ {
 		cdateOneLess := cdate.AddDate(0, 0, -365)
 		data.Set("FromDate", cdateOneLess.Format("02.01.2006"))
 		data.Set("ToDate", cdate.Format("02.01.2006"))
@@ -35,7 +35,6 @@ func getHrListForTicker(tkr string) (*hrecordlist.HRecordList, error) {
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
 			log.Println(err)
-			return nil, err
 		}
 		fName := "pkg/scraper/mse/html/history.html"
 		err = os.WriteFile(fName, body, 0660)
@@ -76,59 +75,65 @@ func scrapeFile(file string, tkr string, hrl *hrecordlist.HRecordList) error {
 	if cerr != nil {
 		return cerr
 	}
-	pp.Println("before OnHTML tbody")
 	c.OnHTML("tbody", func(h *colly.HTMLElement) {
-		pp.Println("found tbody")
 		h.ForEach("tr", func(i int, h *colly.HTMLElement) {
-			pp.Println("found tr in tbody")
 			date := h.ChildText("td:nth-child(1)")
+			date = hrecfmt.FormatDate(date)
 			polt := h.ChildText("td:nth-child(2)")
-			poltFloat, err := strconv.ParseFloat(polt, 32)
+			poltFloat, err := hrecfmt.EUDecimalToUSFromStr(polt)
 			if err != nil {
 				log.Println(err)
 				cerr = err
+				return
 			}
 			max := h.ChildText("td:nth-child(3)")
-			maxFloat, err := strconv.ParseFloat(max, 32)
+			maxFloat, err := hrecfmt.EUDecimalToUSFromStr(max)
 			if err != nil {
 				log.Println(err)
 				cerr = err
+				return
 			}
 			min := h.ChildText("td:nth-child(4)")
-			minFloat, err := strconv.ParseFloat(min, 32)
+			minFloat, err := hrecfmt.EUDecimalToUSFromStr(min)
 			if err != nil {
 				log.Println(err)
 				cerr = err
+				return
 			}
-			avgprice := h.ChildText("td:nth-child(4)")
-			avgPriceFloat, err := strconv.ParseFloat(avgprice, 32)
+			avgprice := h.ChildText("td:nth-child(5)")
+			avgPriceFloat, err := hrecfmt.EUDecimalToUSFromStr(avgprice)
 			if err != nil {
 				log.Println(err)
 				cerr = err
+				return
 			}
-			revenuePerc := h.ChildText("td:nth-child(5)")
-			revenuePercFloat, err := strconv.ParseFloat(revenuePerc, 32)
+			revenuePerc := h.ChildText("td:nth-child(6)")
+			revenuePercFloat, err := hrecfmt.EUDecimalToUSFromStr(revenuePerc)
 			if err != nil {
 				log.Println(err)
 				cerr = err
+				return
 			}
-			amount := h.ChildText("td:nth-child(6)")
-			amountInt, err := strconv.Atoi(amount)
+			amount := h.ChildText("td:nth-child(7)")
+			amountFloat, err := hrecfmt.EUDecimalToUSFromStr(amount)
 			if err != nil {
 				log.Println(err)
 				cerr = err
+				return
 			}
-			revBest := h.ChildText("td:nth-child(7)")
-			revBestFloat, err := strconv.ParseFloat(revBest, 32)
+			revBest := h.ChildText("td:nth-child(8)")
+			revBestFloat, err := hrecfmt.EUDecimalToUSFromStr(revBest)
 			if err != nil {
 				log.Println(err)
 				cerr = err
+				return
 			}
-			revTot := h.ChildText("td:nth-child(8)")
-			revTotFloat, err := strconv.ParseFloat(revTot, 32)
+			revTot := h.ChildText("td:nth-child(9)")
+			revTotFloat, err := hrecfmt.EUDecimalToUSFromStr(revTot)
 			if err != nil {
 				log.Println(err)
 				cerr = err
+				return
 			}
 			hr, err := hrecord.NewHRecord(
 				hrecord.WithDate(date),
@@ -138,7 +143,7 @@ func scrapeFile(file string, tkr string, hrl *hrecordlist.HRecordList) error {
 				hrecord.WithMin(float32(minFloat)),
 				hrecord.WithAvgPrice(float32(avgPriceFloat)),
 				hrecord.WithRevenuePercent(float32(revenuePercFloat)),
-				hrecord.WithAmount(amountInt),
+				hrecord.WithAmount(amountFloat),
 				hrecord.WithRevenueBEST(float32(revBestFloat)),
 				hrecord.WithRevenueTotal(float32(revTotFloat)),
 				hrecord.WithCurrency("MKD"),
@@ -146,8 +151,14 @@ func scrapeFile(file string, tkr string, hrl *hrecordlist.HRecordList) error {
 			if err != nil {
 				cerr = err
 			}
-			pp.Println(hr)
-			hrl.Append(*hr)
+			err = hr.Save()
+			if err != nil {
+				panic("aAAAAAAAAAAAAAAAAAAAAAA")
+				log.Println(err)
+				debug.PrintStack()
+				return
+			}
+			// hrl.Append(*hr)
 		})
 	})
 	if cerr != nil {

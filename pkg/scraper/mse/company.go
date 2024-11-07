@@ -1,10 +1,12 @@
 package scraper
 
 import (
+	"errors"
 	"fmt"
 	"log"
+	"runtime/debug"
 	"stocktrust/pkg/company"
-	"stocktrust/pkg/strings/formatter"
+	compfmt "stocktrust/pkg/strings/formatter/company"
 
 	"github.com/gocolly/colly"
 )
@@ -43,7 +45,6 @@ func getCompanyFromTicker(tkr string) (*company.Company, error) {
 		return nil, cerr
 	}
 	var (
-		image        string
 		name         string
 		address      string
 		city         string
@@ -60,8 +61,13 @@ func getCompanyFromTicker(tkr string) (*company.Company, error) {
 	)
 	cc.OnHTML(companyDataWrapper, func(h *colly.HTMLElement) {
 		name = h.ChildText(".title")
-		image = h.ChildAttr("img", "src")
+		if name == "" {
+			return
+		}
 		address = h.ChildText(companyDataWrapper + " > .row:nth-child(3) .col-md-8")
+		if address == "" {
+			return
+		}
 		city = h.ChildText(".row:nth-child(4) .col-md-8")
 		country = h.ChildText(".row:nth-child(5) .col-md-8")
 		email = h.ChildText(".row:nth-child(6) .col-md-8")
@@ -87,7 +93,6 @@ func getCompanyFromTicker(tkr string) (*company.Company, error) {
 		return nil, err
 	}
 	cmp.Name = name
-	cmp.Image = image
 	cmp.Address = address
 	cmp.City = city
 	cmp.Country = country
@@ -100,9 +105,15 @@ func getCompanyFromTicker(tkr string) (*company.Company, error) {
 	cmp.Fax = fax
 	cmp.Prospect = prospect
 	cmp.URL = url
-	if name == "" {
-		return nil, fmt.Errorf("invalid company %v", cmp)
+	if name == "" || address == "" {
+		return nil, errors.New("invalid company")
 	}
-	formatter.Company(cmp)
+	compfmt.Company(cmp)
+	err = cmp.Save()
+	if err != nil {
+		log.Println(err)
+		debug.PrintStack()
+		return nil, err
+	}
 	return cmp, nil
 }

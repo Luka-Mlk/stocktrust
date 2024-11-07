@@ -1,8 +1,13 @@
 package hrecord
 
-import "log"
+import (
+	"log"
+
+	"github.com/rs/xid"
+)
 
 type HRecord struct {
+	Id             string
 	Date           string
 	Ticker         string
 	POLT           float32
@@ -10,7 +15,7 @@ type HRecord struct {
 	Min            float32
 	AvgPrice       float32
 	RevenuePercent float32
-	Amount         int
+	Amount         float32
 	RevenueBEST    float32
 	RevenueTotal   float32
 	Currency       string
@@ -25,7 +30,9 @@ type Persistence interface {
 type Option func(*HRecord) error
 
 func NewHRecord(o ...Option) (*HRecord, error) {
-	r := &HRecord{}
+	r := &HRecord{
+		Id: xid.New().String(),
+	}
 	for _, option := range o {
 		if err := option(r); err != nil {
 			log.Println(err)
@@ -84,7 +91,7 @@ func WithRevenuePercent(price float32) Option {
 	}
 }
 
-func WithAmount(amount int) Option {
+func WithAmount(amount float32) Option {
 	return func(h *HRecord) error {
 		h.Amount = amount
 		return nil

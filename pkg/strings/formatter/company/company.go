@@ -1,4 +1,4 @@
-package formatter
+package compfmt
 
 import (
 	"stocktrust/pkg/company"

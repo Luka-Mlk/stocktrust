@@ -1,10 +1,14 @@
 package company
 
-import "log"
+import (
+	"log"
+
+	"github.com/rs/xid"
+)
 
 type Company struct {
+	Id           string
 	Name         string
-	Image        string
 	Address      string
 	City         string
 	Country      string
@@ -29,7 +33,9 @@ type Persistence interface {
 type Option func(*Company) error
 
 func NewCompany(o ...Option) (*Company, error) {
-	c := &Company{}
+	c := &Company{
+		Id: xid.New().String(),
+	}
 	for _, option := range o {
 		err := option(c)
 		if err != nil {
@@ -43,13 +49,6 @@ func NewCompany(o ...Option) (*Company, error) {
 func WithName(name string) Option {
 	return func(c *Company) error {
 		c.Name = name
-		return nil
-	}
-}
-
-func WithImage(img string) Option {
-	return func(c *Company) error {
-		c.Image = img
 		return nil
 	}
 }
