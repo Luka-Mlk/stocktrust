@@ -6,7 +6,10 @@ import (
 	"log"
 	"runtime/debug"
 	"stocktrust/pkg/company"
+<<<<<<< HEAD
 	"stocktrust/pkg/queue"
+=======
+>>>>>>> main
 	compfmt "stocktrust/pkg/strings/formatter/company"
 
 	"github.com/gocolly/colly"

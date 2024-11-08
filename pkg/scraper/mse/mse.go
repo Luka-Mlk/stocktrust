@@ -13,7 +13,6 @@ func Init() error {
 		debug.PrintStack()
 		return err
 	}
-
 	for _, tkr := range tkrs {
 		latestDate, err := hrecord.GetLatestTkrDate(tkr)
 		if err != nil && err.Error() == "record for ticker not found" {
