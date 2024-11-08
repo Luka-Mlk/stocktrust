@@ -9,7 +9,6 @@ import (
 	"os"
 	"runtime/debug"
 	"stocktrust/pkg/hrecord"
-	"stocktrust/pkg/hrecordlist"
 	hrecfmt "stocktrust/pkg/strings/formatter/hrecord"
 	"strings"
 	"time"
@@ -17,12 +16,55 @@ import (
 	"github.com/gocolly/colly"
 )
 
-func getHrListForTicker(tkr string) (*hrecordlist.HRecordList, error) {
+func updateHrForTicker(tkr string, lDate time.Time) error {
 	end := fmt.Sprintf("https://www.mse.mk/mk/stats/symbolhistory/%s", tkr)
 	ctyp := "application/x-www-form-urlencoded"
 	cdate := time.Now()
 	data := url.Values{}
-	for i := 0; i < 1; i++ {
+	datesMatch := false
+	for !datesMatch {
+		lDatePlus := lDate.AddDate(0, 0, 365)
+		data.Set("FromDate", lDate.Format("02.01.2006"))
+		data.Set("ToDate", lDatePlus.Format("02.01.2006"))
+		data.Set("Code", tkr)
+		res, err := http.Post(end, ctyp, strings.NewReader(data.Encode()))
+		if err != nil {
+			log.Println(err)
+			debug.PrintStack()
+			return err
+		}
+		body, err := io.ReadAll(res.Body)
+		if err != nil {
+			log.Println(err)
+			debug.PrintStack()
+			return err
+		}
+		fName := "pkg/scraper/mse/html/history.html"
+		err = os.WriteFile(fName, body, 0660)
+		if err != nil {
+			log.Print(err)
+			debug.PrintStack()
+			return err
+		}
+		err = scrapeFile(fName, tkr)
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+		lDate = lDatePlus
+		if lDatePlus.After(cdate) {
+			datesMatch = true
+		}
+	}
+	return nil
+}
+
+func getHrListForTicker(tkr string) error {
+	end := fmt.Sprintf("https://www.mse.mk/mk/stats/symbolhistory/%s", tkr)
+	ctyp := "application/x-www-form-urlencoded"
+	cdate := time.Now()
+	data := url.Values{}
+	for i := 0; i < 10; i++ {
 		cdateOneLess := cdate.AddDate(0, 0, -365)
 		data.Set("FromDate", cdateOneLess.Format("02.01.2006"))
 		data.Set("ToDate", cdate.Format("02.01.2006"))
@@ -30,36 +72,33 @@ func getHrListForTicker(tkr string) (*hrecordlist.HRecordList, error) {
 		res, err := http.Post(end, ctyp, strings.NewReader(data.Encode()))
 		if err != nil {
 			log.Println(err)
-			return nil, err
+			return err
 		}
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
 			log.Println(err)
+			debug.PrintStack()
+			return err
 		}
 		fName := "pkg/scraper/mse/html/history.html"
 		err = os.WriteFile(fName, body, 0660)
 		if err != nil {
 			log.Print(err)
-			return nil, err
+			debug.PrintStack()
+			return err
 		}
-		hrl, err := hrecordlist.NewHRecordList(
-			hrecordlist.WithPersistence(&hrecordlist.SQLPersistence{}),
-		)
+		err = scrapeFile(fName, tkr)
 		if err != nil {
 			log.Println(err)
-			return nil, err
-		}
-		err = scrapeFile(fName, tkr, hrl)
-		if err != nil {
-			log.Println(err)
-			return nil, err
+			debug.PrintStack()
+			return err
 		}
 		cdate = cdate.AddDate(0, 0, -365)
 	}
-	return nil, nil
+	return nil
 }
 
-func scrapeFile(file string, tkr string, hrl *hrecordlist.HRecordList) error {
+func scrapeFile(file string, tkr string) error {
 	c := colly.NewCollector()
 	c.WithTransport(http.NewFileTransport(http.Dir("./")))
 	c.Limit(&colly.LimitRule{
@@ -153,12 +192,10 @@ func scrapeFile(file string, tkr string, hrl *hrecordlist.HRecordList) error {
 			}
 			err = hr.Save()
 			if err != nil {
-				panic("aAAAAAAAAAAAAAAAAAAAAAA")
 				log.Println(err)
 				debug.PrintStack()
 				return
 			}
-			// hrl.Append(*hr)
 		})
 	})
 	if cerr != nil {

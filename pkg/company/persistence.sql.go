@@ -9,7 +9,7 @@ import (
 type SQLPersistence struct{}
 
 func (p *SQLPersistence) Save(c Company) error {
-	tkr, err := GetByTkd(c)
+	tkr, err := GetByTkr(c)
 	if err != nil {
 		log.Println(err)
 		debug.PrintStack()
@@ -27,7 +27,7 @@ func (p *SQLPersistence) Save(c Company) error {
 	return nil
 }
 
-func GetByTkd(c Company) (string, error) {
+func GetByTkr(c Company) (string, error) {
 	db, err := db.Conn()
 	if err != nil {
 		log.Println(err)
@@ -36,7 +36,7 @@ func GetByTkd(c Company) (string, error) {
 	}
 	row := db.QueryRow(getByTicker, c.Ticker)
 	if row == nil {
-		return "", err
+		return "", nil
 	}
 	var data string
 	row.Scan(&data)

@@ -1,9 +1,11 @@
 package hrecord
 
 import (
+	"errors"
 	"log"
 	"runtime/debug"
 	"stocktrust/pkg/db"
+	"time"
 )
 
 type SQLPersistence struct{}
@@ -12,6 +14,7 @@ func (p *SQLPersistence) Save(r HRecord) error {
 	err := Create(r)
 	if err != nil {
 		log.Println(err)
+		debug.PrintStack()
 		return err
 	}
 	return nil
@@ -46,6 +49,32 @@ func Create(r HRecord) error {
 	return nil
 }
 
+func GetLatestTkrDate(tkr string) (time.Time, error) {
+	db, err := db.Conn()
+	if err != nil {
+		log.Println(err)
+		debug.PrintStack()
+		return time.Time{}, err
+	}
+	rows, err := db.Query(getLatestTickerDate, tkr)
+	if err != nil {
+		log.Println(err)
+		debug.PrintStack()
+		return time.Time{}, err
+	}
+	if !rows.Next() {
+		return time.Time{}, errors.New("record for ticker not found")
+	}
+	var data time.Time
+	for rows.Next() {
+		err = rows.Scan(&data)
+		if err != nil {
+			log.Println(err)
+		}
+	}
+	return data, nil
+}
+
 // ======== SQL QUERIES ========
 
 const insert string = `
@@ -66,4 +95,12 @@ const insert string = `
 		)
 	VALUES 
 		($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
-	`
+`
+
+const getLatestTickerDate string = `
+	SELECT date
+	FROM history_records
+	WHERE ticker = $1
+	ORDER BY (date) DESC
+	LIMIT 1
+`

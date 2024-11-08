@@ -16,7 +16,7 @@ const (
 	companyDataWrapper string = "#izdavach"
 )
 
-func getCompanyFromTicker(tkr string) (*company.Company, error) {
+func getCompanyFromTicker(tkr string) error {
 	lookupURL := fmt.Sprintf("https://www.mse.mk/mk/search/%s", tkr)
 	c := colly.NewCollector()
 	c.Limit(&colly.LimitRule{
@@ -30,7 +30,7 @@ func getCompanyFromTicker(tkr string) (*company.Company, error) {
 	})
 	if cerr != nil {
 		log.Println(cerr)
-		return nil, cerr
+		return cerr
 	}
 	c.OnHTML(accordionSeletor, func(h *colly.HTMLElement) {
 		companyUrl := h.Attr("href")
@@ -42,7 +42,7 @@ func getCompanyFromTicker(tkr string) (*company.Company, error) {
 	})
 	if cerr != nil {
 		log.Println(cerr)
-		return nil, cerr
+		return cerr
 	}
 	var (
 		name         string
@@ -81,7 +81,7 @@ func getCompanyFromTicker(tkr string) (*company.Company, error) {
 		url = h.Request.URL.String()
 	})
 	if cerr != nil {
-		return nil, cerr
+		return cerr
 	}
 	c.Visit(lookupURL)
 	cmp, err := company.NewCompany(
@@ -90,7 +90,7 @@ func getCompanyFromTicker(tkr string) (*company.Company, error) {
 	)
 	if err != nil {
 		log.Println(err)
-		return nil, err
+		return err
 	}
 	cmp.Name = name
 	cmp.Address = address
@@ -106,14 +106,14 @@ func getCompanyFromTicker(tkr string) (*company.Company, error) {
 	cmp.Prospect = prospect
 	cmp.URL = url
 	if name == "" || address == "" {
-		return nil, errors.New("invalid company")
+		return errors.New("invalid company")
 	}
 	compfmt.Company(cmp)
 	err = cmp.Save()
 	if err != nil {
 		log.Println(err)
 		debug.PrintStack()
-		return nil, err
+		return err
 	}
-	return cmp, nil
+	return nil
 }
