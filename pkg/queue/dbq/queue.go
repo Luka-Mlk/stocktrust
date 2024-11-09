@@ -18,8 +18,7 @@ type Node struct {
 }
 
 type sll struct {
-	Length int
-	Head   *Node
+	Head *Node
 }
 
 func (list *sll) prepend(item persistence) {

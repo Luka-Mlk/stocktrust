@@ -29,30 +29,32 @@ func (p *SQLPersistence) Save(c Company) error {
 }
 
 func GetByTkr(c Company) (string, error) {
+	ctx := context.Background()
 	db, err := db.Conn()
 	if err != nil {
 		log.Println(err)
 		debug.PrintStack()
 		return "", err
 	}
-	row := db.QueryRow(context.Background(), getByTicker, c.Ticker)
-	if row == nil {
-		return "", nil
-	}
+	defer db.Release()
+	row := db.QueryRow(ctx, getByTicker, c.Ticker)
+	db.Release()
 	var data string
 	row.Scan(&data)
 	return data, nil
 }
 
 func Create(c Company) error {
+	ctx := context.Background()
 	db, err := db.Conn()
 	if err != nil {
 		log.Println(err)
 		debug.PrintStack()
 		return err
 	}
+	defer db.Release()
 	_, err = db.Exec(
-		context.Background(),
+		ctx,
 		insert,
 		c.Id,
 		c.Name,

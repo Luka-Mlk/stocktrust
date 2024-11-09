@@ -27,6 +27,7 @@ func Create(r HRecord) error {
 		log.Println(err)
 		return err
 	}
+	defer db.Release()
 	_, err = db.Exec(
 		context.Background(),
 		insert,
@@ -58,6 +59,7 @@ func GetLatestTkrDate(tkr string) (time.Time, error) {
 		debug.PrintStack()
 		return time.Time{}, err
 	}
+	defer db.Release()
 	rows, err := db.Query(context.Background(), getLatestTickerDate, tkr)
 	if err != nil {
 		log.Println(err)
