@@ -3,41 +3,33 @@ package scraper
 import (
 	"log"
 	"runtime/debug"
-	"stocktrust/pkg/hrecord"
+	"stocktrust/pkg/queue/dbq"
+	"sync"
 )
 
 func Init() error {
+	q := dbq.DBQueue()
+	q.Init()
+	var wg sync.WaitGroup
+	threads := 10
 	tkrs, err := GetTickers()
 	if err != nil {
 		log.Println(err)
 		debug.PrintStack()
 		return err
 	}
-	for _, tkr := range tkrs {
-		latestDate, err := hrecord.GetLatestTkrDate(tkr)
-		if err != nil && err.Error() == "record for ticker not found" {
-			err = getCompanyFromTicker(tkr)
-			if err != nil {
-				continue
-			}
-			err = getHrListForTicker(tkr)
-			if err != nil {
-				log.Println(err)
-				debug.PrintStack()
-				return err
-			}
-		} else if err != nil {
-			log.Println(err)
-			debug.PrintStack()
-			return err
-		} else {
-			err = updateHrForTicker(tkr, latestDate)
-			if err != nil {
-				log.Println(err)
-				debug.PrintStack()
-				return err
-			}
+	TPT := len(tkrs) / threads
+	RT := len(tkrs) % threads
+	startidx := 0
+	for i := 0; i < threads; i++ {
+		endidx := startidx + TPT
+		if i < RT {
+			endidx++
 		}
+		wg.Add(1)
+		go divideLoad(&wg, tkrs[startidx:endidx], startidx)
+		startidx = endidx
 	}
+	wg.Wait()
 	return nil
 }

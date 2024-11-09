@@ -4,12 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"runtime/debug"
 	"stocktrust/pkg/company"
-<<<<<<< HEAD
-	"stocktrust/pkg/queue"
-=======
->>>>>>> main
+	"stocktrust/pkg/queue/dbq"
 	compfmt "stocktrust/pkg/strings/formatter/company"
 
 	"github.com/gocolly/colly"
@@ -21,6 +17,7 @@ const (
 )
 
 func getCompanyFromTicker(tkr string) error {
+	queue := dbq.DBQueue()
 	lookupURL := fmt.Sprintf("https://www.mse.mk/mk/search/%s", tkr)
 	c := colly.NewCollector()
 	c.Limit(&colly.LimitRule{
@@ -114,14 +111,7 @@ func getCompanyFromTicker(tkr string) error {
 	}
 	compfmt.Company(cmp)
 
-	var q queue.Queue
-	q.Enqueue(cmp)
+	queue.Enqueue(cmp)
 
-	err = cmp.Save()
-	if err != nil {
-		log.Println(err)
-		debug.PrintStack()
-		return err
-	}
 	return nil
 }

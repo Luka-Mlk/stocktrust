@@ -1,6 +1,7 @@
 package company
 
 import (
+	"context"
 	"log"
 	"runtime/debug"
 	"stocktrust/pkg/db"
@@ -34,7 +35,7 @@ func GetByTkr(c Company) (string, error) {
 		debug.PrintStack()
 		return "", err
 	}
-	row := db.QueryRow(getByTicker, c.Ticker)
+	row := db.QueryRow(context.Background(), getByTicker, c.Ticker)
 	if row == nil {
 		return "", nil
 	}
@@ -51,6 +52,7 @@ func Create(c Company) error {
 		return err
 	}
 	_, err = db.Exec(
+		context.Background(),
 		insert,
 		c.Id,
 		c.Name,
