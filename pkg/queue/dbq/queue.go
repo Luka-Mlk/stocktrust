@@ -4,8 +4,6 @@ import (
 	"log"
 	"runtime/debug"
 	"sync"
-
-	"github.com/k0kubun/pp"
 )
 
 type persistence interface {
@@ -46,7 +44,6 @@ func (list *sll) append(item persistence) {
 		current = current.Next
 	}
 	current.Next = &newNode
-	pp.Println("ADDED:", current.Next)
 }
 
 func (list *sll) removeLast() {
@@ -70,7 +67,6 @@ func (list *sll) removeFirst() {
 		return
 	}
 	list.Head = list.Head.Next
-	pp.Println("REMOVED:", list.Head)
 }
 
 // ======= QUEUE ========================================================
@@ -105,5 +101,5 @@ func (q *Queue) dequeue() error {
 }
 
 func (q *Queue) Enqueue(i persistence) {
-	QC <- i
+	qc <- i
 }

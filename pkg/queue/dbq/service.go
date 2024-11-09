@@ -4,11 +4,9 @@ import (
 	"log"
 	"runtime/debug"
 	"sync"
-
-	"github.com/k0kubun/pp"
 )
 
-var QC = make(chan persistence)
+var qc = make(chan persistence)
 var qi = make(chan bool)
 var q *Queue
 
@@ -26,17 +24,15 @@ func (q *Queue) Init() {
 
 func (q *Queue) checkerService() {
 	for {
-		item := <-QC
+		item := <-qc
 		q.enqueue(item)
 		qi <- true
-		pp.Println("ENQUEUE SERVICE")
 	}
 }
 
 func (q *Queue) deQueueService() {
 	for {
 		<-qi
-		pp.Println("DEQUEUE SERVICE")
 		err := q.dequeue()
 		if err != nil {
 			log.Println(err)
