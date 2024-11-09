@@ -10,6 +10,7 @@ import (
 func divideLoad(wg *sync.WaitGroup, tkrs []string, group int) error {
 	defer wg.Done()
 	for _, tkr := range tkrs {
+		// FILTER NO 2 - get latest record date
 		latestDate, err := hrecord.GetLatestTkrDate(tkr)
 		if err != nil && err.Error() == "record for ticker not found" {
 			err = getCompanyFromTicker(tkr)
@@ -27,6 +28,7 @@ func divideLoad(wg *sync.WaitGroup, tkrs []string, group int) error {
 			debug.PrintStack()
 			return err
 		} else {
+			// FILTER NO 3 - get all missing records
 			err = updateHrForTicker(tkr, latestDate)
 			if err != nil {
 				log.Println(err)

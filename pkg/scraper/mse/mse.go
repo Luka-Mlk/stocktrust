@@ -20,12 +20,14 @@ func Init() error {
 		debug.PrintStack()
 		return err
 	}
+	// FILTER NO 1 - get all tickers from website
 	tkrs, err := GetTickers()
 	if err != nil {
 		log.Println(err)
 		debug.PrintStack()
 		return err
 	}
+	// Distribute load over threads
 	// taks per thread
 	TPT := len(tkrs) / threadsInt
 	// remaining tasks
