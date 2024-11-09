@@ -21,7 +21,7 @@ func Conn() (*pgxpool.Conn, error) {
 	const defaultConnectTimeout = time.Second * 5
 
 	if conPool == nil {
-		connstr := fmt.Sprintf("postgres://root:root@127.0.0.1:5432/stocktrust")
+		connstr := fmt.Sprintf("your connection string here")
 		pgxConf, err := pgxpool.ParseConfig(connstr)
 		if err != nil {
 			return nil, err
