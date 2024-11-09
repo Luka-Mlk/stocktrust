@@ -9,6 +9,7 @@ import (
 	"os"
 	"runtime/debug"
 	"stocktrust/pkg/hrecord"
+	"stocktrust/pkg/queue/dbq"
 	hrecfmt "stocktrust/pkg/strings/formatter/hrecord"
 	"strings"
 	"time"
@@ -59,7 +60,7 @@ func updateHrForTicker(tkr string, lDate time.Time) error {
 	return nil
 }
 
-func getHrListForTicker(tkr string) error {
+func getHrListForTicker(tkr string, group int) error {
 	end := fmt.Sprintf("https://www.mse.mk/mk/stats/symbolhistory/%s", tkr)
 	ctyp := "application/x-www-form-urlencoded"
 	cdate := time.Now()
@@ -80,7 +81,7 @@ func getHrListForTicker(tkr string) error {
 			debug.PrintStack()
 			return err
 		}
-		fName := "pkg/scraper/mse/html/history.html"
+		fName := fmt.Sprintf("pkg/scraper/mse/html/history-group-%v.html", group)
 		err = os.WriteFile(fName, body, 0660)
 		if err != nil {
 			log.Print(err)
@@ -99,6 +100,7 @@ func getHrListForTicker(tkr string) error {
 }
 
 func scrapeFile(file string, tkr string) error {
+	queue := dbq.DBQueue()
 	c := colly.NewCollector()
 	c.WithTransport(http.NewFileTransport(http.Dir("./")))
 	c.Limit(&colly.LimitRule{
@@ -190,12 +192,7 @@ func scrapeFile(file string, tkr string) error {
 			if err != nil {
 				cerr = err
 			}
-			err = hr.Save()
-			if err != nil {
-				log.Println(err)
-				debug.PrintStack()
-				return
-			}
+			queue.Enqueue(hr)
 		})
 	})
 	if cerr != nil {

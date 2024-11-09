@@ -2,42 +2,46 @@ package scraper
 
 import (
 	"log"
+	"os"
 	"runtime/debug"
-	"stocktrust/pkg/hrecord"
+	"stocktrust/pkg/queue/dbq"
+	"strconv"
+	"sync"
 )
 
 func Init() error {
+	q := dbq.DBQueue()
+	q.Init()
+	var wg sync.WaitGroup
+	threads := os.Getenv("NUM_THREADS")
+	threadsInt, err := strconv.Atoi(threads)
+	if err != nil {
+		log.Println(err)
+		debug.PrintStack()
+		return err
+	}
+	// FILTER NO 1 - get all tickers from website
 	tkrs, err := GetTickers()
 	if err != nil {
 		log.Println(err)
 		debug.PrintStack()
 		return err
 	}
-	for _, tkr := range tkrs {
-		latestDate, err := hrecord.GetLatestTkrDate(tkr)
-		if err != nil && err.Error() == "record for ticker not found" {
-			err = getCompanyFromTicker(tkr)
-			if err != nil {
-				continue
-			}
-			err = getHrListForTicker(tkr)
-			if err != nil {
-				log.Println(err)
-				debug.PrintStack()
-				return err
-			}
-		} else if err != nil {
-			log.Println(err)
-			debug.PrintStack()
-			return err
-		} else {
-			err = updateHrForTicker(tkr, latestDate)
-			if err != nil {
-				log.Println(err)
-				debug.PrintStack()
-				return err
-			}
+	// Distribute load over threads
+	// taks per thread
+	TPT := len(tkrs) / threadsInt
+	// remaining tasks
+	RT := len(tkrs) % threadsInt
+	startidx := 0
+	for i := 0; i < threadsInt; i++ {
+		endidx := startidx + TPT
+		if i < RT {
+			endidx++
 		}
+		wg.Add(1)
+		go divideLoad(&wg, tkrs[startidx:endidx], startidx)
+		startidx = endidx
 	}
+	wg.Wait()
 	return nil
 }

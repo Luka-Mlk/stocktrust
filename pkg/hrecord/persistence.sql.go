@@ -1,6 +1,7 @@
 package hrecord
 
 import (
+	"context"
 	"errors"
 	"log"
 	"runtime/debug"
@@ -26,7 +27,9 @@ func Create(r HRecord) error {
 		log.Println(err)
 		return err
 	}
+	defer db.Release()
 	_, err = db.Exec(
+		context.Background(),
 		insert,
 		r.Id,
 		r.Date,
@@ -56,7 +59,8 @@ func GetLatestTkrDate(tkr string) (time.Time, error) {
 		debug.PrintStack()
 		return time.Time{}, err
 	}
-	rows, err := db.Query(getLatestTickerDate, tkr)
+	defer db.Release()
+	rows, err := db.Query(context.Background(), getLatestTickerDate, tkr)
 	if err != nil {
 		log.Println(err)
 		debug.PrintStack()
