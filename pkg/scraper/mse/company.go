@@ -14,6 +14,7 @@ import (
 const (
 	accordionSeletor   string = "#collapseFive a:nth-child(1)"
 	companyDataWrapper string = "#izdavach"
+	noDataCompany      string = "#titleKonf2011"
 )
 
 func getCompanyFromTicker(tkr string) error {
@@ -66,9 +67,6 @@ func getCompanyFromTicker(tkr string) error {
 			return
 		}
 		address = h.ChildText(companyDataWrapper + " > .row:nth-child(3) .col-md-8")
-		if address == "" {
-			return
-		}
 		city = h.ChildText(".row:nth-child(4) .col-md-8")
 		country = h.ChildText(".row:nth-child(5) .col-md-8")
 		email = h.ChildText(".row:nth-child(6) .col-md-8")
@@ -84,6 +82,10 @@ func getCompanyFromTicker(tkr string) error {
 	if cerr != nil {
 		return cerr
 	}
+	cc.OnHTML(noDataCompany, func(h *colly.HTMLElement) {
+		name = h.Text
+		url = h.Request.URL.String()
+	})
 	c.Visit(lookupURL)
 	cmp, err := company.NewCompany(
 		company.WithTicker(tkr),
