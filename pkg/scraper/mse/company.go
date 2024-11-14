@@ -9,6 +9,7 @@ import (
 	compfmt "stocktrust/pkg/strings/formatter/company"
 
 	"github.com/gocolly/colly"
+	"github.com/k0kubun/pp"
 )
 
 const (
@@ -18,6 +19,7 @@ const (
 )
 
 func getCompanyFromTicker(tkr string) error {
+	pp.Println(tkr)
 	queue := dbq.DBQueue()
 	lookupURL := fmt.Sprintf("https://www.mse.mk/mk/search/%s", tkr)
 	c := colly.NewCollector()
@@ -67,6 +69,9 @@ func getCompanyFromTicker(tkr string) error {
 			return
 		}
 		address = h.ChildText(companyDataWrapper + " > .row:nth-child(3) .col-md-8")
+		if address == "" {
+			return
+		}
 		city = h.ChildText(".row:nth-child(4) .col-md-8")
 		country = h.ChildText(".row:nth-child(5) .col-md-8")
 		email = h.ChildText(".row:nth-child(6) .col-md-8")
@@ -112,6 +117,7 @@ func getCompanyFromTicker(tkr string) error {
 		return errors.New("invalid company")
 	}
 	compfmt.Company(cmp)
+	pp.Println(cmp)
 
 	queue.Enqueue(cmp)
 
