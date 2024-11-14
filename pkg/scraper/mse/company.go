@@ -1,7 +1,6 @@
 package scraper
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"stocktrust/pkg/company"
@@ -9,7 +8,6 @@ import (
 	compfmt "stocktrust/pkg/strings/formatter/company"
 
 	"github.com/gocolly/colly"
-	"github.com/k0kubun/pp"
 )
 
 const (
@@ -19,7 +17,6 @@ const (
 )
 
 func getCompanyFromTicker(tkr string) error {
-	pp.Println(tkr)
 	queue := dbq.DBQueue()
 	lookupURL := fmt.Sprintf("https://www.mse.mk/mk/search/%s", tkr)
 	c := colly.NewCollector()
@@ -113,11 +110,10 @@ func getCompanyFromTicker(tkr string) error {
 	cmp.Fax = fax
 	cmp.Prospect = prospect
 	cmp.URL = url
-	if name == "" || address == "" {
-		return errors.New("invalid company")
-	}
+	// if name == "" || address == "" {
+	// 	return errors.New("invalid company")
+	// }
 	compfmt.Company(cmp)
-	pp.Println(cmp)
 
 	queue.Enqueue(cmp)
 

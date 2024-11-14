@@ -7,9 +7,9 @@ import (
 )
 
 func EUDecimalToUSFromStr(str string) (float32, error) {
-	if str == "0" {
-		return 0, nil
-	}
+	// if str == "0" {
+	// 	return 0, nil
+	// }
 	if str == "" {
 		return 0, nil
 	}
