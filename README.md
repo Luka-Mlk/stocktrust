@@ -64,7 +64,7 @@ After completing these steps, your database should be configured and the server 
 
 
 
-##Execution of program
+## Execution of program
 
 In the following image is the time needed for our program to scrape and save all needed information from the Macedonian stock exchange.
 
