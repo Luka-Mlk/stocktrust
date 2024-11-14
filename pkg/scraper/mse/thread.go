@@ -17,7 +17,7 @@ func divideLoad(wg *sync.WaitGroup, tkrs []string, group int) error {
 			if err != nil {
 				continue
 			}
-			err = getHrListForTicker(tkr, group)
+			err = getHrListForTicker(tkr)
 			if err != nil {
 				log.Println(err)
 				debug.PrintStack()
