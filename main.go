@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"math/big"
+	"os"
 	scraper "stocktrust/pkg/scraper/mse"
 	"time"
 )
@@ -15,5 +16,5 @@ func main() {
 
 	scraper.Init()
 	elapsed := time.Since(start)
-	log.Printf("Binomial took %s", elapsed)
+	log.Printf("Binomial took %s with %s threads", elapsed, os.Getenv("NUM_THREADS"))
 }

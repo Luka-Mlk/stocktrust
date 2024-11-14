@@ -1,7 +1,6 @@
 package scraper
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"stocktrust/pkg/company"
@@ -14,6 +13,7 @@ import (
 const (
 	accordionSeletor   string = "#collapseFive a:nth-child(1)"
 	companyDataWrapper string = "#izdavach"
+	noDataCompany      string = "#titleKonf2011"
 )
 
 func getCompanyFromTicker(tkr string) error {
@@ -84,6 +84,10 @@ func getCompanyFromTicker(tkr string) error {
 	if cerr != nil {
 		return cerr
 	}
+	cc.OnHTML(noDataCompany, func(h *colly.HTMLElement) {
+		name = h.Text
+		url = h.Request.URL.String()
+	})
 	c.Visit(lookupURL)
 	cmp, err := company.NewCompany(
 		company.WithTicker(tkr),
@@ -106,9 +110,9 @@ func getCompanyFromTicker(tkr string) error {
 	cmp.Fax = fax
 	cmp.Prospect = prospect
 	cmp.URL = url
-	if name == "" || address == "" {
-		return errors.New("invalid company")
-	}
+	// if name == "" || address == "" {
+	// 	return errors.New("invalid company")
+	// }
 	compfmt.Company(cmp)
 
 	queue.Enqueue(cmp)

@@ -6,6 +6,20 @@ import (
 )
 
 func Company(cmp *company.Company) {
+	if cmp.Address == "" {
+		cmp.Address = "/"
+		cmp.City = "/"
+		cmp.Country = "/"
+		cmp.Email = "/"
+		cmp.Website = "/"
+		cmp.ContactName = "/"
+		cmp.ContactPhone = "/"
+		cmp.ContactEmail = "/"
+		cmp.Phone = "/"
+		cmp.Fax = "/"
+		cmp.Prospect = "/"
+		return
+	}
 	scn := strings.Split(cmp.ContactName, "\n")
 	for i, v := range scn {
 		scn[i] = strings.TrimSpace(v)
