@@ -104,14 +104,35 @@ func GetDetailsByTkr(tkr string) (*Company, error) {
 		return nil, err
 	}
 	defer db.Release()
-	row := db.QueryRow(ctx, getAllByTicker, tkr)
+	row := db.QueryRow(ctx, getDetailsByTicker, tkr)
 	if err != nil {
 		log.Println(err)
 		debug.PrintStack()
 		return nil, err
 	}
 	var c Company
-	row.Scan(&c)
+	err = row.Scan(
+		&c.Id,
+		&c.Name,
+		&c.Address,
+		&c.City,
+		&c.Country,
+		&c.Email,
+		&c.Website,
+		&c.ContactName,
+		&c.ContactPhone,
+		&c.ContactEmail,
+		&c.Phone,
+		&c.Fax,
+		&c.Prospect,
+		&c.Ticker,
+		&c.URL,
+	)
+	if err != nil {
+		log.Println(err)
+		debug.PrintStack()
+		return nil, err
+	}
 	return &c, nil
 }
 
@@ -203,7 +224,7 @@ const getAll string = `
 	LIMIT 15
 `
 
-const getAllByTicker string = `
+const getDetailsByTicker string = `
 	SELECT
 		id,
 	 	name,
