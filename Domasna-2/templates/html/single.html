@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Company Info</title>
+        <link rel="stylesheet" href="/assets/css/single_company.css" />
+    </head>
+    <body>
+        <div class="header">
+            <div class="logo">
+                <img src="assets/img/image.png" alt="Logo" />
+                <h1>Stock Trust Analysis Macedonia</h1>
+            </div>
+            <form onsubmit="searchCompany(event)">
+                <div class="search-bar">
+                    <input type="text" class="lookup" placeholder="Search..." />
+                    <button>🔍</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="content">
+            <div class="company-info">
+                <div class="info-section">
+                    <h2>{{.Company.Name}}</h2>
+                    <p><strong>Contact Information</strong></p>
+                    <p>• Telephone: {{.Company.Phone}}</p>
+                    <p>• Alternative number: {{.Company.Fax}}</p>
+                    <p>• Email: {{.Company.Email}}</p>
+                    <p>• Person of contact: {{.Company.ContactName}}</p>
+                </div>
+                <!-- <div class="last-trade">
+                    <h3>Last Trade</h3>
+                    <p><strong>Information of last trade:</strong></p>
+                    <ul>
+                        <li>Date</li>
+                        <li>Last trade price</li>
+                        <li>Max, min, avg price</li>
+                        <li>% Change</li>
+                        <li>Volume</li>
+                        <li>Turnover best</li>
+                        <li>Total turnover</li>
+                    </ul>
+                </div> -->
+            </div>
+        </div>
+    </body>
+</html>
