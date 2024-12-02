@@ -4,6 +4,7 @@ import (
 	"log"
 	"runtime/debug"
 	"stocktrust/pkg/company"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/k0kubun/pp/v3"
@@ -23,7 +24,8 @@ func LandingPage(c *fiber.Ctx) error {
 }
 
 func GetByTicker(c *fiber.Ctx) error {
-	company, err := company.GetDetailsByTkr(c.Params("tkr"))
+	tkr := strings.ToUpper(c.Params("tkr"))
+	company, err := company.GetDetailsByTkr(tkr)
 	if err != nil {
 		log.Println(err)
 		debug.PrintStack()
