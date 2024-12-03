@@ -44,7 +44,7 @@ func GetByTkr(c Company) (string, error) {
 	return data, nil
 }
 
-func GetAll() ([]Company, error) {
+func GetTopCompanies() ([]Company, error) {
 	ctx := context.Background()
 	db, err := db.Conn()
 	if err != nil {
@@ -53,7 +53,7 @@ func GetAll() ([]Company, error) {
 		return nil, err
 	}
 	defer db.Release()
-	rows, err := db.Query(ctx, getAll)
+	rows, err := db.Query(ctx, getTopCompanies)
 	if err != nil {
 		log.Println(err)
 		debug.PrintStack()
@@ -136,6 +136,57 @@ func GetDetailsByTkr(tkr string) (*Company, error) {
 	return &c, nil
 }
 
+func GetAll() ([]Company, error) {
+	ctx := context.Background()
+	db, err := db.Conn()
+	if err != nil {
+		log.Println(err)
+		debug.PrintStack()
+		return nil, err
+	}
+	defer db.Release()
+	rows, err := db.Query(ctx, getAll)
+	if err != nil {
+		log.Println(err)
+		debug.PrintStack()
+		return nil, err
+	}
+	defer rows.Close()
+	var companies []Company
+	for rows.Next() {
+		var c Company
+		err := rows.Scan(
+			&c.Id,
+			&c.Name,
+			&c.Address,
+			&c.City,
+			&c.Country,
+			&c.Email,
+			&c.Website,
+			&c.ContactName,
+			&c.ContactPhone,
+			&c.ContactEmail,
+			&c.Phone,
+			&c.Fax,
+			&c.Prospect,
+			&c.Ticker,
+			&c.URL,
+		)
+		if err != nil {
+			log.Println("Error scanning row:", err)
+			debug.PrintStack()
+			return nil, err
+		}
+		companies = append(companies, c)
+	}
+	if err := rows.Err(); err != nil {
+		log.Println("Error with rows:", err)
+		debug.PrintStack()
+		return nil, err
+	}
+	return companies, nil
+}
+
 func Create(c Company) error {
 	ctx := context.Background()
 	db, err := db.Conn()
@@ -204,6 +255,26 @@ const getByTicker string = `
 `
 
 const getAll string = `
+	SELECT
+		id,
+	 	name,
+		address,
+	  	city,
+		country,
+		email,
+		website,
+		contact_name,
+		contact_phone,
+		contact_email,
+		phone,
+		fax,
+		prospect,
+		ticker,
+		url
+	FROM companies
+`
+
+const getTopCompanies string = `
 	SELECT
 		id,
 	 	name,

@@ -7,32 +7,41 @@ import (
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/k0kubun/pp/v3"
 )
 
-// LandingPage handler
 func LandingPage(c *fiber.Ctx) error {
-	companies, err := company.GetAll()
+	companies, err := company.GetTopCompanies()
 	if err != nil {
 		log.Println(err)
 		debug.PrintStack()
-		return err
+		return c.Render("views/404", nil)
 	}
-	return c.Render("home", fiber.Map{
+	return c.Render("views/home", fiber.Map{
 		"Companies": companies,
 	})
 }
 
-func GetByTicker(c *fiber.Ctx) error {
+func CompanyDetails(c *fiber.Ctx) error {
 	tkr := strings.ToUpper(c.Params("tkr"))
 	company, err := company.GetDetailsByTkr(tkr)
 	if err != nil {
 		log.Println(err)
 		debug.PrintStack()
-		return err
+		return c.Render("views/404", nil)
 	}
-	pp.Println(company)
-	return c.Render("single", fiber.Map{
+	return c.Render("views/company", fiber.Map{
 		"Company": company,
+	})
+}
+
+func AllCompanies(c *fiber.Ctx) error {
+	companies, err := company.GetAll()
+	if err != nil {
+		log.Println(err)
+		debug.PrintStack()
+		return c.Render("views/404", nil)
+	}
+	return c.Render("views/companies_list", fiber.Map{
+		"Companies": companies,
 	})
 }

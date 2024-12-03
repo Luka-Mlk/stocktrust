@@ -1,33 +1,9 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Stock Trust Analysis</title>
-        <link rel="stylesheet" href="/assets/css/home.css" />
-        <script>
-            function searchCompany(event) {
-                event.preventDefault();
-                const ticker = document.querySelector(".lookup").value;
-                window.location.href = `/company/${ticker}`;
-            }
-        </script>
-    </head>
+    {{template "partials/head" .}}
     <body>
-        <div class="header">
-            <div class="logo">
-                <a href="/"><img src="/assets/img/image.png" alt="Logo" /> </a>
-                <h1>Stock Trust Analysis Macedonia</h1>
-            </div>
-            <form onsubmit="searchCompany(event)">
-                <div class="search-bar">
-                    <input type="text" class="lookup" placeholder="Search..." />
-                    <button>🔍</button>
-                </div>
-            </form>
-        </div>
-
-        <div class="content">
+        {{template "partials/header" .}}
+        <main>
             <div class="top-companies">
                 <h2>Current Top Companies</h2>
                 <table>
@@ -42,18 +18,29 @@
                         {{range .Companies}}
                         <tr>
                             <td>{{.Name}}</td>
-                            <td>{{.Ticker}}</td>
+                            <td>
+                                <a href="company/{{.Ticker}}">{{.Ticker}}</a>
+                            </td>
                             <td>{{.URL}}</td>
                         </tr>
                         {{else}}
                         <tr>
                             <td colspan="14">No companies available.</td>
+
+                            <!doctype html>
+                            <html lang="en">
+                                <body>
+                                    <div class="content"></div>
+                                </body>
+                            </html>
                         </tr>
                         {{end}}
                     </tbody>
                 </table>
+                <a class="all-companies" href="/companies"
+                    >View all companies</a
+                >
             </div>
-
             <div class="side-panel">
                 <h3>Yesterday's Top Companies</h3>
                 <ol>
@@ -64,6 +51,6 @@
                     {{end}}
                 </ol>
             </div>
-        </div>
+        </main>
     </body>
 </html>
