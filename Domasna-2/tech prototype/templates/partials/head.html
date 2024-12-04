@@ -1,0 +1,41 @@
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Company Info</title>
+    <link rel="stylesheet" href="/assets/css/main.css" />
+    <script>
+        function searchCompany(event) {
+            event.preventDefault();
+            const ticker = document.querySelector(".lookup").value;
+            window.location.href = `/company/${ticker}`;
+        }
+        function toggleMenu() {
+            const menu = document.createElement("div");
+            menu.classList.add("popup-menu");
+
+            const aboutUs = document.createElement("div");
+            aboutUs.textContent = "About Us";
+            aboutUs.classList.add("popup-item");
+
+            const contact = document.createElement("div");
+            contact.textContent = "Contact";
+            contact.classList.add("popup-item");
+
+            menu.appendChild(aboutUs);
+            menu.appendChild(contact);
+
+            // Append the popup menu to the body
+            document.body.appendChild(menu);
+
+            // Close the menu when clicked anywhere outside
+            window.onclick = function (event) {
+                if (
+                    !menu.contains(event.target) &&
+                    event.target !== document.querySelector(".hamburger-menu")
+                ) {
+                    menu.remove();
+                }
+            };
+        }
+    </script>
+</head>
