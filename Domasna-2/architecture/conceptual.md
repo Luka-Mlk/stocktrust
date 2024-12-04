@@ -18,27 +18,6 @@ The system can be divided into the following major components:
 
 ![conceptual architecture](./concept.png)
 
-```
-+-------------------------+     +---------------------+     +-------------------------+
-| Scraping Service        |<--->|    Frontend Service |<--->|  Database               |
-| (gocolly, multithreaded)|     | (GoFiber)           |     | (SQL/NoSQL)             |
-+-------------------------+     +---------------------+     +-------------------------+
-        |                          |                          |
-        |                          |                          |
-        v                          v                          v
-+---------------------+     +----------------------+     +--------------------------+
-| Article Scraping    |<--->| Sentiment Analysis   |     | Data Calculation Service |
-| Service (gocolly)   |     | (Ollama, GoFiber)    |     | (go-ma, go-rsi)          |
-+---------------------+     +----------------------+     +--------------------------+
-        |
-        |
-        v
-+----------------------+
-| Prediction Service   |
-| (Python, Flask, LSTM)|
-+----------------------+
-```
-
 ---
 
 #### Implementational Architecture
@@ -75,27 +54,6 @@ The system can be divided into the following major components:
 
 ![implementational architecture](./implementational.png)
 
-```
-+-------------------------+     +---------------------+     +-------------------------+
-| Scraping Service        |<--->|    Frontend Service |<--->|  Database               |
-| (gocolly, multithreaded)|     | (GoFiber)           |     | (SQL/NoSQL)             |
-+-------------------------+     +---------------------+     +-------------------------+
-        |                          |                          |
-        |                          |                          |
-        v                          v                          v
-+---------------------+     +----------------------+     +--------------------------+
-| Article Scraping    |<--->| Sentiment Analysis   |     | Data Calculation Service |
-| Service (gocolly)   |     | (Ollama, GoFiber)    |     | (go-ma, go-rsi)          |
-+---------------------+     +----------------------+     +--------------------------+
-        |
-        |
-        v
-+----------------------+
-| Prediction Service   |
-| (Python, Flask, LSTM)|
-+----------------------+
-```
-
 ---
 
 #### Functional Architecture
@@ -125,26 +83,5 @@ The system can be divided into the following major components:
 7. **Database**: A central storage system (SQL or NoSQL) that stores historical stock data, articles, sentiment results, and prediction outputs.
 
 ![execution architecture](./functional.png)
-
-```
-+-------------------------+     +---------------------+     +-------------------------+
-| Scraping Service        |<--->|    Frontend Service |<--->|  Database               |
-| (gocolly, multithreaded)|     | (GoFiber)           |     | (SQL/NoSQL)             |
-+-------------------------+     +---------------------+     +-------------------------+
-        |                          |                          |
-        |                          |                          |
-        v                          v                          v
-+---------------------+     +----------------------+     +--------------------------+
-| Article Scraping    |<--->| Sentiment Analysis   |     | Data Calculation Service |
-| Service (gocolly)   |     | (Ollama, GoFiber)    |     | (go-ma, go-rsi)          |
-+---------------------+     +----------------------+     +--------------------------+
-        |
-        |
-        v
-+----------------------+
-| Prediction Service   |
-| (Python, Flask, LSTM)|
-+----------------------+
-```
 
 ---
