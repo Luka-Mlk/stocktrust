@@ -4,20 +4,21 @@ import (
 	"log"
 	"runtime/debug"
 	"stocktrust/pkg/company"
+	"stocktrust/pkg/hrecord"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 func LandingPage(c *fiber.Ctx) error {
-	companies, err := company.GetTopCompanies()
+	records, err := hrecord.GetTopTen()
 	if err != nil {
 		log.Println(err)
 		debug.PrintStack()
 		return c.Render("views/404", nil)
 	}
 	return c.Render("views/home", fiber.Map{
-		"Companies": companies,
+		"Records": records,
 	})
 }
 

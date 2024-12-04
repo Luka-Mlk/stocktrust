@@ -126,6 +126,22 @@ func WithPersistence(ps Persistence) Option {
 	}
 }
 
+// func (r *HRecord) BindFromDB(a any) error {
+
+// 	r.Id = a.Id
+// 	r.Date = a.Date
+// 	r.Ticker = a.Ticker
+// 	r.POLT = a.POL
+// 	r.Max = a.Ma
+// 	r.Min = a.Mi
+// 	r.AvgPrice = a.AvgPric
+// 	r.RevenuePercent = a.RevenuePercen
+// 	r.Amount = a.Amoun
+// 	r.RevenueBEST = a.RevenueBES
+// 	r.RevenueTotal = a.RevenueTota
+// 	r.Currency = a.Currency
+// }
+
 func (r *HRecord) Save() error {
 	for _, persistence := range r.persistences {
 		err := persistence.Save(*r)

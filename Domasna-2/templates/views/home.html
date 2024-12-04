@@ -9,19 +9,21 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>Company</th>
                             <th>Ticker</th>
-                            <th>URL</th>
+                            <th>Average price</th>
+                            <th>% Change</th>
+                            <th>BEST</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {{range .Companies}}
+                        {{range .Records}}
                         <tr>
-                            <td>{{.Name}}</td>
                             <td>
                                 <a href="company/{{.Ticker}}">{{.Ticker}}</a>
                             </td>
-                            <td>{{.URL}}</td>
+                            <td>{{.AvgPrice}}</td>
+                            <td>{{.RevenuePercent}}</td>
+                            <td>{{.RevenueBEST}}</td>
                         </tr>
                         {{else}}
                         <tr>
