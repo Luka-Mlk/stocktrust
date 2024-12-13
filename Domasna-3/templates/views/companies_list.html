@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+    {{template "partials/head" .}}
+    <body>
+        {{template "partials/header" .}}
+        <main id="company-list">
+            <h2>All Companies</h2>
+            <div class="companies-list">
+                {{range .Companies}}
+                <div class="company-card">
+                    <h3>{{.Name}}</h3>
+                    <p><strong>Ticker:</strong> {{.Ticker}}</p>
+                    <p>
+                        <strong>URL:</strong>
+                        <a href="{{.URL}}" target="_blank">{{.URL}}</a>
+                    </p>
+                    <div class="company-details">
+                        <p><strong>Contact Information:</strong></p>
+                        <p>• Telephone: {{.Phone}}</p>
+                        <p>• Alternative number: {{.Fax}}</p>
+                        <p>
+                            • Email: <a href="mailto:{{.Email}}">{{.Email}}</a>
+                        </p>
+                        <p>• Person of contact: {{.ContactName}}</p>
+                    </div>
+                    <a href="/company/{{.Ticker}}" class="details-link"
+                        >View Details</a
+                    >
+                </div>
+                {{else}}
+                <p>No companies available.</p>
+                {{end}}
+            </div>
+        </main>
+    </body>
+</html>
