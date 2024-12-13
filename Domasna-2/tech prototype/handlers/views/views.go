@@ -47,8 +47,7 @@ func CompanyDetails(c *fiber.Ctx) error {
 func AllCompanies(c *fiber.Ctx) error {
 	companies, err := company.GetAll()
 	if err != nil {
-		log.Println(err)
-		debug.PrintStack()
+		log.Println("error getting all companies:", err)
 		return c.Render("views/404", nil)
 	}
 	return c.Render("views/companies_list", fiber.Map{
