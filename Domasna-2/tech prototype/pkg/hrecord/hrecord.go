@@ -1,7 +1,10 @@
 package hrecord
 
 import (
+	"fmt"
 	"log"
+	"strconv"
+	"time"
 
 	"github.com/rs/xid"
 )
@@ -21,6 +24,36 @@ type HRecord struct {
 	Currency       string
 
 	persistences []Persistence
+}
+
+type RecordProxy struct {
+	Id             string
+	Date           time.Time
+	Ticker         string
+	POLT           string
+	Max            string
+	Min            string
+	AvgPrice       string
+	RevenuePercent string
+	Amount         string
+	RevenueBEST    string
+	RevenueTotal   string
+	Currency       string
+}
+
+type RecordDisplay struct {
+	Id             string
+	Date           string
+	Ticker         string
+	POLT           string
+	Max            string
+	Min            string
+	AvgPrice       string
+	RevenuePercent string
+	Amount         string
+	RevenueBEST    string
+	RevenueTotal   string
+	Currency       string
 }
 
 type Persistence interface {
@@ -126,21 +159,62 @@ func WithPersistence(ps Persistence) Option {
 	}
 }
 
-// func (r *HRecord) BindFromDB(a any) error {
+func (r *HRecord) BindFromDB(proxy RecordProxy) error {
+	floatPOLT, err := strconv.ParseFloat(proxy.POLT, 32)
+	if err != nil {
+		e := fmt.Errorf("error parsing POLT:\n%s", err)
+		return e
+	}
+	r.POLT = float32(floatPOLT)
+	floatMax, err := strconv.ParseFloat(proxy.Max, 32)
+	if err != nil {
+		e := fmt.Errorf("error parsing max:\n%s", err)
+		return e
+	}
+	r.Max = float32(floatMax)
+	floatMin, err := strconv.ParseFloat(proxy.Min, 32)
+	if err != nil {
+		e := fmt.Errorf("error parsing min:\n%s", err)
+		return e
+	}
+	r.Min = float32(floatMin)
+	floatAvgPrice, err := strconv.ParseFloat(proxy.AvgPrice, 32)
+	if err != nil {
+		e := fmt.Errorf("error parsing avg:\n%s", err)
+		return e
+	}
+	r.AvgPrice = float32(floatAvgPrice)
+	floatRevenuePercent, err := strconv.ParseFloat(proxy.RevenuePercent, 32)
+	if err != nil {
+		e := fmt.Errorf("error parsing revenue percent:\n%s", err)
+		return e
+	}
+	r.RevenuePercent = float32(floatRevenuePercent)
+	floatAmount, err := strconv.ParseFloat(proxy.Amount, 32)
+	if err != nil {
+		e := fmt.Errorf("error parsing revenue amount:\n%s", err)
+		return e
+	}
+	r.Amount = float32(floatAmount)
+	floatRevenueBEST, err := strconv.ParseFloat(proxy.RevenueBEST, 32)
+	if err != nil {
+		e := fmt.Errorf("error parsing revenue revenue BEST:\n%s", err)
+		return e
+	}
+	r.RevenueBEST = float32(floatRevenueBEST)
+	floatRevenueTotal, err := strconv.ParseFloat(proxy.RevenueTotal, 32)
+	if err != nil {
+		e := fmt.Errorf("error parsing revenue total:\n%s", err)
+		return e
+	}
+	r.RevenueTotal = float32(floatRevenueTotal)
 
-// 	r.Id = a.Id
-// 	r.Date = a.Date
-// 	r.Ticker = a.Ticker
-// 	r.POLT = a.POL
-// 	r.Max = a.Ma
-// 	r.Min = a.Mi
-// 	r.AvgPrice = a.AvgPric
-// 	r.RevenuePercent = a.RevenuePercen
-// 	r.Amount = a.Amoun
-// 	r.RevenueBEST = a.RevenueBES
-// 	r.RevenueTotal = a.RevenueTota
-// 	r.Currency = a.Currency
-// }
+	r.Id = proxy.Id
+	r.Date = proxy.Date.Format("2006-01-02")
+	r.Ticker = proxy.Ticker
+	r.Currency = proxy.Currency
+	return nil
+}
 
 func (r *HRecord) Save() error {
 	for _, persistence := range r.persistences {

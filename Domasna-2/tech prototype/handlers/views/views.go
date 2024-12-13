@@ -5,6 +5,7 @@ import (
 	"runtime/debug"
 	"stocktrust/pkg/company"
 	"stocktrust/pkg/hrecord"
+	rparser "stocktrust/pkg/strings/parser/records"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
@@ -13,12 +14,20 @@ import (
 func LandingPage(c *fiber.Ctx) error {
 	records, err := hrecord.GetTopTen()
 	if err != nil {
-		log.Println(err)
-		debug.PrintStack()
+		log.Println("error getting landing page: ", err)
 		return c.Render("views/404", nil)
 	}
+	var recordsFormatted []hrecord.RecordDisplay
+	for _, r := range records {
+		rd, err := rparser.CreateCurrencyConverted(r)
+		if err != nil {
+			log.Println("error getting landing page: ", err)
+			return c.Render("views/404", nil)
+		}
+		recordsFormatted = append(recordsFormatted, rd)
+	}
 	return c.Render("views/home", fiber.Map{
-		"Records": records,
+		"Records": recordsFormatted,
 	})
 }
 
@@ -38,8 +47,7 @@ func CompanyDetails(c *fiber.Ctx) error {
 func AllCompanies(c *fiber.Ctx) error {
 	companies, err := company.GetAll()
 	if err != nil {
-		log.Println(err)
-		debug.PrintStack()
+		log.Println("error getting all companies:", err)
 		return c.Render("views/404", nil)
 	}
 	return c.Render("views/companies_list", fiber.Map{

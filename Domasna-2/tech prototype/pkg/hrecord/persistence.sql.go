@@ -3,10 +3,10 @@ package hrecord
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log"
 	"runtime/debug"
 	"stocktrust/pkg/db"
-	"strconv"
 	"time"
 )
 
@@ -57,145 +57,43 @@ func GetTopTen() ([]HRecord, error) {
 	ctx := context.Background()
 	db, err := db.Conn()
 	if err != nil {
-		log.Println(err)
-		debug.PrintStack()
-		return nil, err
+		e := fmt.Errorf("error connecting to database:\n%s", err)
+		return nil, e
 	}
 	defer db.Release()
 	rows, err := db.Query(ctx, getTopTen)
 	if err != nil {
-		log.Println(err)
-		debug.PrintStack()
-		return nil, err
+		e := fmt.Errorf("error executing query:\n%s", err)
+		return nil, e
 	}
 	var hrecords []HRecord
 	for rows.Next() {
 		var h HRecord
-		proxy := struct {
-			id             string
-			date           time.Time
-			ticker         string
-			POLT           string
-			max            string
-			min            string
-			avgPrice       string
-			revenuePercent string
-			amount         string
-			revenueBEST    string
-			revenueTotal   string
-			currency       string
-		}{}
+		var proxy RecordProxy
 		err := rows.Scan(
-			&proxy.id,
-			&proxy.date,
-			&proxy.ticker,
+			&proxy.Id,
+			&proxy.Date,
+			&proxy.Ticker,
 			&proxy.POLT,
-			&proxy.max,
-			&proxy.min,
-			&proxy.avgPrice,
-			&proxy.revenuePercent,
-			&proxy.amount,
-			&proxy.revenueBEST,
-			&proxy.revenueTotal,
-			&proxy.currency,
+			&proxy.Max,
+			&proxy.Min,
+			&proxy.AvgPrice,
+			&proxy.RevenuePercent,
+			&proxy.Amount,
+			&proxy.RevenueBEST,
+			&proxy.RevenueTotal,
+			&proxy.Currency,
 		)
-
-		floatPOLT, err := strconv.ParseFloat(proxy.POLT, 32)
+		h.BindFromDB(proxy)
 		if err != nil {
-			log.Println("Error parsing POLT:", err)
-			debug.PrintStack()
-			return nil, err
+			e := fmt.Errorf("error scanning from database:\n%s", err)
+			return nil, e
 		}
-		h.POLT = float32(floatPOLT)
-
-		// Max
-		floatMax, err := strconv.ParseFloat(proxy.max, 32)
-		if err != nil {
-			log.Println("Error parsing Max:", err)
-			debug.PrintStack()
-			return nil, err
-		}
-		h.Max = float32(floatMax)
-
-		// Min
-		floatMin, err := strconv.ParseFloat(proxy.min, 32)
-		if err != nil {
-			log.Println("Error parsing Min:", err)
-			debug.PrintStack()
-			return nil, err
-		}
-		h.Min = float32(floatMin)
-
-		// AvgPrice
-		floatAvgPrice, err := strconv.ParseFloat(proxy.avgPrice, 32)
-		if err != nil {
-			log.Println("Error parsing AvgPrice:", err)
-			debug.PrintStack()
-			return nil, err
-		}
-		h.AvgPrice = float32(floatAvgPrice)
-
-		// RevenuePercent
-		floatRevenuePercent, err := strconv.ParseFloat(proxy.revenuePercent, 32)
-		if err != nil {
-			log.Println("Error parsing RevenuePercent:", err)
-			debug.PrintStack()
-			return nil, err
-		}
-		h.RevenuePercent = float32(floatRevenuePercent)
-
-		// Amount
-		floatAmount, err := strconv.ParseFloat(proxy.amount, 32)
-		if err != nil {
-			log.Println("Error parsing Amount:", err)
-			debug.PrintStack()
-			return nil, err
-		}
-		h.Amount = float32(floatAmount)
-
-		// RevenueBEST
-		floatRevenueBEST, err := strconv.ParseFloat(proxy.revenueBEST, 32)
-		if err != nil {
-			log.Println("Error parsing RevenueBEST:", err)
-			debug.PrintStack()
-			return nil, err
-		}
-		h.RevenueBEST = float32(floatRevenueBEST)
-
-		// RevenueTotal
-		floatRevenueTotal, err := strconv.ParseFloat(proxy.revenueTotal, 32)
-		if err != nil {
-			log.Println("Error parsing RevenueTotal:", err)
-			debug.PrintStack()
-			return nil, err
-		}
-		h.RevenueTotal = float32(floatRevenueTotal)
-
-		h.Id = proxy.id
-		h.Date = proxy.date.Format("2006-02-01")
-		h.Ticker = proxy.ticker
-		h.Currency = proxy.currency
-		if err != nil {
-			log.Println("Error scanning row:", err)
-			debug.PrintStack()
-			return nil, err
-		}
-		// pp.Println(proxy.ticker)
-		// pp.Println("floatPOLT:", floatPOLT)
-		// pp.Println("floatMax:", floatMax)
-		// pp.Println("floatMin:", floatMin)
-		// pp.Println("floatAvgPrice:", floatAvgPrice)
-		// pp.Println("floatRevenuePercent:", floatRevenuePercent)
-		// pp.Println("floatAmount:", floatAmount)
-		// pp.Println("floatRevenueBEST:", floatRevenueBEST)
-		// pp.Println("floatRevenueTotal:", floatRevenueTotal)
-		// return nil, nil
 		hrecords = append(hrecords, h)
 	}
 	if err := rows.Err(); err != nil {
-		log.Println("Error with rows:", err)
-		debug.PrintStack()
-		return nil, err
+		e := fmt.Errorf("error with rows:\n%s", err)
+		return nil, e
 	}
 	return hrecords, nil
 }
