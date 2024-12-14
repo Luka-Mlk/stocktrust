@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"runtime/debug"
 	"stocktrust/pkg/db"
 )
 
@@ -78,7 +77,7 @@ func GetTopCompanies() ([]Company, error) {
 		)
 		if err != nil {
 			e := fmt.Errorf("error scanning from database:\n%s", err)
-			eturn nil, e
+			return nil, e
 		}
 		companies = append(companies, c)
 	}
