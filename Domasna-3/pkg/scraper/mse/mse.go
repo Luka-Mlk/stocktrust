@@ -1,9 +1,8 @@
 package scraper
 
 import (
-	"log"
+	"fmt"
 	"os"
-	"runtime/debug"
 	"stocktrust/pkg/queue/dbq"
 	"strconv"
 	"sync"
@@ -16,16 +15,14 @@ func Init() error {
 	threads := os.Getenv("NUM_THREADS")
 	threadsInt, err := strconv.Atoi(threads)
 	if err != nil {
-		log.Println(err)
-		debug.PrintStack()
-		return err
+		e := fmt.Errorf("error getting thread count:\n%s", err)
+		return e
 	}
 	// FILTER NO 1 - get all tickers from website
 	tkrs, err := GetTickers()
 	if err != nil {
-		log.Println(err)
-		debug.PrintStack()
-		return err
+		e := fmt.Errorf("error getting tickers:\n%s", err)
+		return e
 	}
 	// Distribute load over threads
 	// taks per thread

@@ -3,9 +3,7 @@ package db
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
-	"runtime/debug"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -40,16 +38,14 @@ func Conn() (*pgxpool.Conn, error) {
 		pgxConf.ConnConfig.ConnectTimeout = defaultConnectTimeout
 		conPool, err = pgxpool.NewWithConfig(context.Background(), pgxConf)
 		if err != nil {
-			log.Println(err)
-			debug.PrintStack()
-			return nil, err
+			e := fmt.Errorf("error creating new pool:\n%v", err)
+			return nil, e
 		}
 	}
 	conn, err := conPool.Acquire(context.Background())
 	if err != nil {
-		log.Println(err)
-		debug.PrintStack()
-		return nil, err
+		e := fmt.Errorf("error aquire connection from pool:\n%v", err)
+		return nil, e
 	}
 	return conn, nil
 }

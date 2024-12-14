@@ -2,6 +2,7 @@ package company
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"runtime/debug"
 	"stocktrust/pkg/db"
@@ -12,18 +13,16 @@ type SQLPersistence struct{}
 func (p *SQLPersistence) Save(c Company) error {
 	tkr, err := GetByTkr(c)
 	if err != nil {
-		log.Println(err)
-		debug.PrintStack()
-		return err
+		e := fmt.Errorf("error getting ticker for creating compny:\n%s", err)
+		return e
 	}
 	if tkr == c.Ticker {
 		return nil
 	}
 	err = Create(c)
 	if err != nil {
-		debug.PrintStack()
-		log.Println(err)
-		return err
+		e := fmt.Errorf("error creating company:\n%s", err)
+		return e
 	}
 	return nil
 }
@@ -32,9 +31,8 @@ func GetByTkr(c Company) (string, error) {
 	ctx := context.Background()
 	db, err := db.Conn()
 	if err != nil {
-		log.Println(err)
-		debug.PrintStack()
-		return "", err
+		e := fmt.Errorf("error connecting to database:\n%s", err)
+		return "", e
 	}
 	defer db.Release()
 	row := db.QueryRow(ctx, getByTicker, c.Ticker)
@@ -48,16 +46,14 @@ func GetTopCompanies() ([]Company, error) {
 	ctx := context.Background()
 	db, err := db.Conn()
 	if err != nil {
-		log.Println(err)
-		debug.PrintStack()
-		return nil, err
+		e := fmt.Errorf("error connecting to database:\n%s", err)
+		return nil, e
 	}
 	defer db.Release()
 	rows, err := db.Query(ctx, getTopCompanies)
 	if err != nil {
-		log.Println(err)
-		debug.PrintStack()
-		return nil, err
+		e := fmt.Errorf("error executing query:\n%s", err)
+		return nil, e
 	}
 	defer rows.Close()
 	var companies []Company
@@ -81,15 +77,13 @@ func GetTopCompanies() ([]Company, error) {
 			&c.URL,
 		)
 		if err != nil {
-			log.Println("Error scanning row:", err)
-			debug.PrintStack()
-			return nil, err
+			e := fmt.Errorf("error scanning from database:\n%s", err)
+			eturn nil, e
 		}
 		companies = append(companies, c)
 	}
 	if err := rows.Err(); err != nil {
 		log.Println("Error with rows:", err)
-		debug.PrintStack()
 		return nil, err
 	}
 	return companies, nil
@@ -99,16 +93,14 @@ func GetDetailsByTkr(tkr string) (*Company, error) {
 	ctx := context.Background()
 	db, err := db.Conn()
 	if err != nil {
-		log.Println(err)
-		debug.PrintStack()
-		return nil, err
+		e := fmt.Errorf("error connecting to database:\n%s", err)
+		return nil, e
 	}
 	defer db.Release()
 	row := db.QueryRow(ctx, getDetailsByTicker, tkr)
 	if err != nil {
-		log.Println(err)
-		debug.PrintStack()
-		return nil, err
+		e := fmt.Errorf("error executing query:\n%s", err)
+		return nil, e
 	}
 	var c Company
 	err = row.Scan(
@@ -129,9 +121,8 @@ func GetDetailsByTkr(tkr string) (*Company, error) {
 		&c.URL,
 	)
 	if err != nil {
-		log.Println(err)
-		debug.PrintStack()
-		return nil, err
+		e := fmt.Errorf("error scanning from database:\n%s", err)
+		return nil, e
 	}
 	return &c, nil
 }
@@ -140,16 +131,14 @@ func GetAll() ([]Company, error) {
 	ctx := context.Background()
 	db, err := db.Conn()
 	if err != nil {
-		log.Println(err)
-		debug.PrintStack()
-		return nil, err
+		e := fmt.Errorf("error connecting to database:\n%s", err)
+		return nil, e
 	}
 	defer db.Release()
 	rows, err := db.Query(ctx, getAll)
 	if err != nil {
-		log.Println(err)
-		debug.PrintStack()
-		return nil, err
+		e := fmt.Errorf("error executing query:\n%s", err)
+		return nil, e
 	}
 	defer rows.Close()
 	var companies []Company
@@ -173,15 +162,13 @@ func GetAll() ([]Company, error) {
 			&c.URL,
 		)
 		if err != nil {
-			log.Println("Error scanning row:", err)
-			debug.PrintStack()
-			return nil, err
+			e := fmt.Errorf("error scanning from database:\n%s", err)
+			return nil, e
 		}
 		companies = append(companies, c)
 	}
 	if err := rows.Err(); err != nil {
 		log.Println("Error with rows:", err)
-		debug.PrintStack()
 		return nil, err
 	}
 	return companies, nil
@@ -191,9 +178,8 @@ func Create(c Company) error {
 	ctx := context.Background()
 	db, err := db.Conn()
 	if err != nil {
-		log.Println(err)
-		debug.PrintStack()
-		return err
+		e := fmt.Errorf("error connecting to database:\n%s", err)
+		return e
 	}
 	defer db.Release()
 	_, err = db.Exec(
@@ -216,9 +202,8 @@ func Create(c Company) error {
 		c.URL,
 	)
 	if err != nil {
-		log.Println(err)
-		debug.PrintStack()
-		return err
+		e := fmt.Errorf("error executing query:\n%s", err)
+		return e
 	}
 	return nil
 }

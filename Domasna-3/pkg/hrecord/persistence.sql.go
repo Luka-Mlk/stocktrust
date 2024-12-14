@@ -4,8 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
-	"runtime/debug"
 	"stocktrust/pkg/db"
 	"time"
 )
@@ -15,9 +13,8 @@ type SQLPersistence struct{}
 func (p *SQLPersistence) Save(r HRecord) error {
 	err := Create(r)
 	if err != nil {
-		log.Println(err)
-		debug.PrintStack()
-		return err
+		e := fmt.Errorf("error creating HRecord:\n%s", err)
+		return e
 	}
 	return nil
 }
@@ -25,8 +22,8 @@ func (p *SQLPersistence) Save(r HRecord) error {
 func Create(r HRecord) error {
 	db, err := db.Conn()
 	if err != nil {
-		log.Println(err)
-		return err
+		e := fmt.Errorf("error connecting to database:\n%s", err)
+		return e
 	}
 	defer db.Release()
 	_, err = db.Exec(
@@ -46,9 +43,8 @@ func Create(r HRecord) error {
 		r.Currency,
 	)
 	if err != nil {
-		log.Println(err)
-		debug.PrintStack()
-		return err
+		e := fmt.Errorf("error executing query:\n%s", err)
+		return e
 	}
 	return nil
 }
@@ -101,16 +97,14 @@ func GetTopTen() ([]HRecord, error) {
 func GetLatestTkrDate(tkr string) (time.Time, error) {
 	db, err := db.Conn()
 	if err != nil {
-		log.Println(err)
-		debug.PrintStack()
-		return time.Time{}, err
+		e := fmt.Errorf("error connecting to database:\n%s", err)
+		return time.Time{}, e
 	}
 	defer db.Release()
 	rows, err := db.Query(context.Background(), getLatestTickerDate, tkr)
 	if err != nil {
-		log.Println(err)
-		debug.PrintStack()
-		return time.Time{}, err
+		e := fmt.Errorf("error executing query:\n%s", err)
+		return time.Time{}, e
 	}
 	if !rows.Next() {
 		return time.Time{}, errors.New("record for ticker not found")
@@ -119,7 +113,8 @@ func GetLatestTkrDate(tkr string) (time.Time, error) {
 	for rows.Next() {
 		err = rows.Scan(&data)
 		if err != nil {
-			log.Println(err)
+			e := fmt.Errorf("error executing query:\n%s", err)
+			return time.Time{}, e
 		}
 	}
 	return data, nil

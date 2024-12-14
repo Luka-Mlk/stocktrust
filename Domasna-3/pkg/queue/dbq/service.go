@@ -2,7 +2,6 @@ package dbq
 
 import (
 	"log"
-	"runtime/debug"
 	"sync"
 )
 
@@ -35,8 +34,7 @@ func (q *Queue) deQueueService() {
 		<-qi
 		err := q.dequeue()
 		if err != nil {
-			log.Println(err)
-			debug.PrintStack()
+			log.Printf("error dequing:\n%s", err)
 		}
 	}
 }

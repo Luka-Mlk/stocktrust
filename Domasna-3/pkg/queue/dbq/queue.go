@@ -1,8 +1,7 @@
 package dbq
 
 import (
-	"log"
-	"runtime/debug"
+	"fmt"
 	"sync"
 )
 
@@ -89,9 +88,8 @@ func (q *Queue) dequeue() error {
 	if q.ListOfItems.Head != nil {
 		err := q.ListOfItems.Head.Value.Save()
 		if err != nil {
-			log.Println(err)
-			debug.PrintStack()
-			return err
+			e := fmt.Errorf("error saving from queue:\n%s", err)
+			return e
 		}
 		q.ListOfItems.removeFirst()
 		q.Length--

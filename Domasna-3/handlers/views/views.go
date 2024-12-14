@@ -2,7 +2,6 @@ package views
 
 import (
 	"log"
-	"runtime/debug"
 	"stocktrust/pkg/company"
 	"stocktrust/pkg/hrecord"
 	rparser "stocktrust/pkg/strings/parser/records"
@@ -35,8 +34,7 @@ func CompanyDetails(c *fiber.Ctx) error {
 	tkr := strings.ToUpper(c.Params("tkr"))
 	company, err := company.GetDetailsByTkr(tkr)
 	if err != nil {
-		log.Println(err)
-		debug.PrintStack()
+		log.Println("error getting landing page: ", err)
 		return c.Render("views/404", nil)
 	}
 	return c.Render("views/company", fiber.Map{
