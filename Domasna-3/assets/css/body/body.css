@@ -8,10 +8,23 @@ body {
     background-color: var(--clr-bg-1);
 }
 
-main {
-    display: flex;
-    justify-content: center;
-    padding: 20px;
-    gap: 20px;
-    color: var(--clr-txt);
+:root {
+    --clr-bg-1: #222;
+    --clr-bg-2: #444;
+    --clr-bg-3: #555;
+    --clr-link: #98b6b1;
+    --clr-txt: #ddd;
+    --clr-border: #777;
+}
+
+* {
+    padding: 0px;
+    margin: 0px;
+    box-sizing: border-box;
+}
+
+a {
+    text-decoration: none;
+    color: var(--clr-link);
+    font-weight: 650;
 }
