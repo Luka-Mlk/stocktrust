@@ -9,6 +9,12 @@ body {
 }
 
 :root {
+    --buy-color: #28a745;
+    --hold-color: #ffc107;
+    --sell-color: #dc3545;
+    --bg-color: #222;
+    --text-color: #ddd;
+    --widget-bg: #333;
     --clr-bg-1: #222;
     --clr-bg-2: #444;
     --clr-bg-3: #555;
