@@ -155,6 +155,8 @@ func scrapeFile(file string, tkr string) error {
 				cerr = err
 				return
 			}
+			// UNCOMMENT HERE TO SCRAPE FASTER
+			// LEAVE COMMENTED TO SCRAPE MORE
 			// if amountFloat == 0 {
 			// 	return
 			// }

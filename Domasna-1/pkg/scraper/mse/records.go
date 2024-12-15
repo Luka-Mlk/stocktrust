@@ -162,9 +162,11 @@ func scrapeFile(file string, tkr string) error {
 				cerr = err
 				return
 			}
-			if amountFloat == 0 {
-				return
-			}
+			// UNCOMMENT HERE TO SCRAPE FASTER
+			// LEAVE COMMENTED TO SCRAPE MORE
+			// if amountFloat == 0 {
+			// 	return
+			// }
 			revBest := h.ChildText("td:nth-child(8)")
 			revBestFloat, err := hrecfmt.EUDecimalToUSFromStr(revBest)
 			if err != nil {

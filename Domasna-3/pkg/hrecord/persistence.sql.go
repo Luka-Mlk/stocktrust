@@ -143,22 +143,22 @@ const insert string = `
 `
 
 const getTopTen string = `
-	SELECT DISTINCT ON (ticker)
-	    id,
-	    date,
+	SELECT
+	    ANY_VALUE(id) AS id,
+	    ANY_VALUE(date) AS date,
 	    ticker,
-	    price_last_transaction,
-	    max,
-	    min,
-	    average_price,
-	    revenue_percent,
-	    amount,
-	    revenue_best,
-	    revenue_total,
-	    currency
+	    ANY_VALUE(price_last_transaction) AS price_last_transaction,
+	    ANY_VALUE(max) AS max,
+	    ANY_VALUE(min) AS min,
+	    ANY_VALUE(average_price) AS average_price,
+	    ANY_VALUE(revenue_percent) AS revenue_percent,
+	    ANY_VALUE(amount) AS amount,
+	    ANY_VALUE(revenue_best) AS revenue_best,
+	    ANY_VALUE(revenue_total) AS revenue_total,
+		ANY_VALUE(currency) AS currency
 	FROM history_records
-	WHERE revenue_best > 10000
-	ORDER BY ticker, revenue_best DESC
+	GROUP BY ticker
+	ORDER BY ticker, date DESC
 	LIMIT 10;
 `
 
