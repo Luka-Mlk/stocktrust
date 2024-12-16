@@ -120,6 +120,52 @@ func GetLatestTkrDate(tkr string) (time.Time, error) {
 	return data, nil
 }
 
+func GetRecordsByTkrAndTimeframe(tkr string, days int) ([]HRecord, error) {
+	db, err := db.Conn()
+	if err != nil {
+		e := fmt.Errorf("error connecting to database:\n%s", err)
+		return nil, e
+	}
+	defer db.Release()
+	now := time.Now()
+	recordsFrom := now.AddDate(0, 0, -days)
+	recordsFromFormatted := recordsFrom.Format("2006-01-02")
+	rows, err := db.Query(
+		context.Background(),
+		getTimeframeTicker,
+		tkr,
+		recordsFromFormatted,
+	)
+	if !rows.Next() {
+		return nil, errors.New("record for ticker not found")
+	}
+	var hrecords []HRecord
+	for rows.Next() {
+		var h HRecord
+		var proxy RecordProxy
+		err := rows.Scan(
+			&proxy.Id,
+			&proxy.Date,
+			&proxy.Ticker,
+			&proxy.POLT,
+			&proxy.Max,
+			&proxy.Min,
+			&proxy.AvgPrice,
+			&proxy.RevenuePercent,
+			&proxy.Amount,
+			&proxy.RevenueBEST,
+			&proxy.RevenueTotal,
+		)
+		h.BindFromDB(proxy)
+		if err != nil {
+			e := fmt.Errorf("error scanning from database:\n%s", err)
+			return nil, e
+		}
+		hrecords = append(hrecords, h)
+	}
+	return hrecords, nil
+}
+
 // ======== SQL QUERIES ========
 
 const insert string = `
@@ -168,4 +214,23 @@ const getLatestTickerDate string = `
 	WHERE ticker = $1
 	ORDER BY (date) DESC
 	LIMIT 1
+`
+
+const getTimeframeTicker string = `
+SELECT
+	id,
+	date,
+	ticker,
+	price_last_transaction,
+	max,
+	min,
+	average_price,
+	revenue_percent,
+	amount,
+	revenue_best,
+	revenue_total
+FROM history_records
+WHERE
+	ticker = $1
+	AND date >= $2;
 `

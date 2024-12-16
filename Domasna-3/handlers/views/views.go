@@ -4,6 +4,7 @@ import (
 	"log"
 	"stocktrust/pkg/company"
 	"stocktrust/pkg/hrecord"
+	"stocktrust/pkg/indicators"
 	rparser "stocktrust/pkg/strings/parser/records"
 	"strings"
 
@@ -35,8 +36,14 @@ func CompanyDetails(c *fiber.Ctx) error {
 	company, err := company.GetDetailsByTkr(tkr)
 	if err != nil {
 		log.Println("error getting landing page: ", err)
-		return c.Render("views/404", nil)
+		return c.SendStatus(502)
 	}
+	records, err := hrecord.GetRecordsByTkrAndTimeframe(tkr, 32)
+	if err != nil {
+		log.Println("error getting landing page: ", err)
+		return c.SendStatus(502)
+	}
+	indicators.CalculateIndicators(records)
 	return c.Render("views/company", fiber.Map{
 		"Company": company,
 	})
