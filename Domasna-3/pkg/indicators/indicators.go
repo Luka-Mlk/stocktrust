@@ -7,7 +7,8 @@ import (
 	"github.com/k0kubun/pp"
 )
 
-func CalculateIndicators(hr []hrecord.HRecord) {
+// Calculates indicators - sma, ema, wma, vwma, hma
+func CalculateIndicators(hr []hrecord.HRecord) (float64, float64, float64, float64, float64) {
 	polts := []float64{}
 	amounts := []float64{}
 	for _, v := range hr {
@@ -19,11 +20,12 @@ func CalculateIndicators(hr []hrecord.HRecord) {
 	wma := calculateWMA(polts)
 	vwma := calculateVWMA(polts, amounts)
 	hma := calculateHMA(polts)
-	pp.Println("SMA:", sma)
-	pp.Println("EMA:", ema)
-	pp.Println("WMA:", wma)
-	pp.Println("VWMA:", vwma)
-	pp.Println("HMA:", hma)
+	pp.Println(sma)
+	pp.Println(ema)
+	pp.Println(wma)
+	pp.Println(vwma)
+	pp.Println(hma)
+	return sma, ema, wma, vwma, hma
 }
 
 func calculateSMA(f []float64) float64 {

@@ -16,6 +16,7 @@ func main() {
 	// api := app.Group("/api")
 	// v1 := api.Group("/v1")
 
+	// app.Get("/sse/trading-signals", views.CompanyTradingSignals)
 	app.Get("/", views.LandingPage)
 	// app.Get("/about-us")
 	app.Get("/companies", views.AllCompanies)
