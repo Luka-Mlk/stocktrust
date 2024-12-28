@@ -32,6 +32,7 @@ func CalculateOscillators(hr []hrecord.HRecord) (float64, float64, float64, floa
 }
 
 func calculateWilliamsR(highs []float64, lows []float64, closings []float64) float64 {
+	pp.Println(highs, lows, closings)
 	h := make(chan float64)
 	l := make(chan float64)
 	c := make(chan float64)
@@ -39,7 +40,17 @@ func calculateWilliamsR(highs []float64, lows []float64, closings []float64) flo
 	go func() {
 		for _, val := range highs {
 			h <- val
+		}
+		close(h)
+	}()
+	go func() {
+		for _, val := range lows {
 			l <- val
+		}
+		close(l)
+	}()
+	go func() {
+		for _, val := range closings {
 			c <- val
 		}
 		close(c)
@@ -49,17 +60,21 @@ func calculateWilliamsR(highs []float64, lows []float64, closings []float64) flo
 	for r := range result {
 		out = append(out, r)
 	}
+	if len(out) < 1 {
+		return 0
+	}
 	return out[0]
 }
 
 func calculateMACD(closings []float64) (float64, float64) {
+	pp.Println(closings)
 	macd := trend.NewMacd[float64]()
 	c := make(chan float64)
 	go func() {
 		for _, closingPrice := range closings {
 			c <- closingPrice
 		}
-		close(c) // Close the channel when done
+		close(c)
 	}()
 	res1, res2 := macd.Compute(c)
 	var out1 []float64
@@ -70,10 +85,18 @@ func calculateMACD(closings []float64) (float64, float64) {
 	for r := range res2 {
 		out2 = append(out2, r)
 	}
+	if len(out1) < 1 {
+		return 0, out2[0]
+	} else if len(out2) < 1 {
+		return out1[0], 0
+	} else if len(out1) < 1 && len(out2) < 1 {
+		return 0, 0
+	}
 	return out1[0], out2[0]
 }
 
 func calculateAwesome(highs []float64, lows []float64) float64 {
+	pp.Println(highs, lows)
 	awsm := momentum.NewAwesomeOscillator[float64]()
 	h := make(chan float64)
 	l := make(chan float64)
@@ -93,6 +116,9 @@ func calculateAwesome(highs []float64, lows []float64) float64 {
 	var out []float64
 	for r := range res {
 		out = append(out, r)
+	}
+	if len(out) < 1 {
+		return 0
 	}
 	return out[0]
 }
@@ -129,10 +155,18 @@ func calculateStochastic(highs []float64, lows []float64, closings []float64) (f
 	for r := range res2 {
 		out2 = append(out2, r)
 	}
+	if len(out1) < 1 && len(out2) < 1 {
+		return 0, 0
+	} else if len(out1) < 1 {
+		return 0, out2[0]
+	} else if len(out2) < 1 {
+		return out1[0], 0
+	}
 	return out1[0], out2[0]
 }
 
 func calculateRsi(closings []float64) float64 {
+	pp.Println(closings)
 	rsi := momentum.NewRsi[float64]()
 	c := make(chan float64)
 	go func() {
@@ -145,6 +179,9 @@ func calculateRsi(closings []float64) float64 {
 	var out []float64
 	for r := range res {
 		out = append(out, r)
+	}
+	if len(out) < 1 {
+		return 0
 	}
 	return out[0]
 }
