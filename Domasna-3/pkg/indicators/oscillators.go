@@ -6,11 +6,10 @@ import (
 
 	"github.com/cinar/indicator/v2/asset"
 	"github.com/cinar/indicator/v2/strategy/trend"
-	"github.com/k0kubun/pp"
 )
 
 // Calculates oscillators - wr, macd1, macd2, awsm, stoch1, stoch2, rsi
-func CalculateOscillatorsDay(hr []hrecord.HRecord) (string, string, string, string, string) {
+func CalculateOscillators(hr []hrecord.HRecord) (string, string, string, string, string) {
 	highs := []float64{}
 	lows := []float64{}
 	closings := []float64{}
@@ -25,19 +24,9 @@ func CalculateOscillatorsDay(hr []hrecord.HRecord) (string, string, string, stri
 	vwma := calculateVWMAStrat(hr, len(hr))
 	bop := calculateBop(hr)
 
-	pp.Println(cci)
-	pp.Println(macd)
-	pp.Println(gc)
-	pp.Println(vwma)
-	pp.Println(bop)
 	return cci, macd, gc, vwma, bop
 }
 
-func CalculateOscillatorWeek() {}
-
-func CalculateOscillatorMonth() {}
-
-// Returns a floating point integer value
 func calculateCCI(hr []hrecord.HRecord, period int) string {
 	open := hr[0].AvgPrice
 	high := hr[0].Max
