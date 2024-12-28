@@ -2,14 +2,15 @@ package indicators
 
 import (
 	"stocktrust/pkg/hrecord"
+	"time"
 
-	"github.com/cinar/indicator/v2/momentum"
-	"github.com/cinar/indicator/v2/trend"
+	"github.com/cinar/indicator/v2/asset"
+	"github.com/cinar/indicator/v2/strategy/trend"
 	"github.com/k0kubun/pp"
 )
 
 // Calculates oscillators - wr, macd1, macd2, awsm, stoch1, stoch2, rsi
-func CalculateOscillators(hr []hrecord.HRecord) (float64, float64, float64, float64, float64, float64, float64) {
+func CalculateOscillatorsDay(hr []hrecord.HRecord) (string, string, string, string, string) {
 	highs := []float64{}
 	lows := []float64{}
 	closings := []float64{}
@@ -18,170 +19,228 @@ func CalculateOscillators(hr []hrecord.HRecord) (float64, float64, float64, floa
 		lows = append(lows, float64(v.Min))
 		closings = append(closings, float64(v.POLT))
 	}
-	wr := calculateWilliamsR(highs, lows, closings)
-	macd1, macd2 := calculateMACD(closings)
-	awsm := calculateAwesome(highs, lows)
-	stoch1, stoch2 := calculateStochastic(highs, lows, closings)
-	rsi := calculateRsi(closings)
-	pp.Println(wr)
-	pp.Println(macd1, macd2)
-	pp.Println(awsm)
-	pp.Println(stoch1, stoch2)
-	pp.Println(rsi)
-	return wr, macd1, macd2, awsm, stoch1, stoch2, rsi
+	cci := calculateCCI(hr, len(hr))
+	macd := calculateMACD(hr, len(hr))
+	gc := calculateGC(hr, len(hr))
+	vwma := calculateVWMAStrat(hr, len(hr))
+	bop := calculateBop(hr)
+
+	pp.Println(cci)
+	pp.Println(macd)
+	pp.Println(gc)
+	pp.Println(vwma)
+	pp.Println(bop)
+	return cci, macd, gc, vwma, bop
 }
 
-func calculateWilliamsR(highs []float64, lows []float64, closings []float64) float64 {
-	pp.Println(highs, lows, closings)
-	h := make(chan float64)
-	l := make(chan float64)
-	c := make(chan float64)
-	wr := momentum.NewWilliamsR[float64]()
-	go func() {
-		for _, val := range highs {
-			h <- val
+func CalculateOscillatorWeek() {}
+
+func CalculateOscillatorMonth() {}
+
+// Returns a floating point integer value
+func calculateCCI(hr []hrecord.HRecord, period int) string {
+	open := hr[0].AvgPrice
+	high := hr[0].Max
+	low := hr[0].Min
+	lastClose := hr[len(hr)-1].AvgPrice
+	volume := 0
+	for _, v := range hr {
+		if high < v.Max {
+			high = v.Max
 		}
-		close(h)
-	}()
-	go func() {
-		for _, val := range lows {
-			l <- val
+		if low > v.Min {
+			low = v.Min
 		}
-		close(l)
-	}()
-	go func() {
-		for _, val := range closings {
-			c <- val
-		}
-		close(c)
-	}()
-	result := wr.Compute(h, l, c)
-	var out []float64
-	for r := range result {
-		out = append(out, r)
+		volume += int(v.Amount)
 	}
-	if len(out) < 1 {
-		return 0
+	cci := trend.NewCciStrategy()
+	cci.Cci.Period = period
+	s := make(chan *asset.Snapshot)
+	go func() {
+		defer close(s)
+		newDate, err := time.Parse("2006-01-02", hr[0].Date)
+		if err != nil {
+			return
+		}
+		s <- &asset.Snapshot{
+			Date:   newDate,
+			Open:   float64(open),
+			High:   float64(high),
+			Close:  float64(lastClose),
+			Volume: float64(volume),
+		}
+	}()
+	x := cci.Compute(s)
+	outData := ""
+	for r := range x {
+		outData = r.Annotation()
 	}
-	return out[0]
+	return outData
 }
 
-func calculateMACD(closings []float64) (float64, float64) {
-	pp.Println(closings)
-	macd := trend.NewMacd[float64]()
-	c := make(chan float64)
-	go func() {
-		for _, closingPrice := range closings {
-			c <- closingPrice
+// Returns a buy/hold/sell signal
+func calculateMACD(hr []hrecord.HRecord, period int) string {
+	open := hr[0].AvgPrice
+	high := hr[0].Max
+	low := hr[0].Min
+	lastClose := hr[len(hr)-1].AvgPrice
+	volume := 0
+	for _, v := range hr {
+		if high < v.Max {
+			high = v.Max
 		}
-		close(c)
+		if low > v.Min {
+			low = v.Min
+		}
+		volume += int(v.Amount)
+	}
+	strategy := trend.NewMacdStrategy()
+	strategy.Macd.Ema1.Period = period
+	strategy.Macd.Ema2.Period = period
+	strategy.Macd.Ema3.Period = period
+	s := make(chan *asset.Snapshot)
+	go func() {
+		defer close(s)
+		newDate, err := time.Parse("2006-01-02", hr[0].Date)
+		if err != nil {
+			return
+		}
+		s <- &asset.Snapshot{
+			Date:   newDate,
+			Open:   float64(open),
+			High:   float64(high),
+			Close:  float64(lastClose),
+			Volume: float64(volume),
+		}
 	}()
-	res1, res2 := macd.Compute(c)
-	var out1 []float64
-	var out2 []float64
-	for r := range res1 {
-		out1 = append(out1, r)
+	x := strategy.Compute(s)
+	outData := ""
+	for r := range x {
+		outData = r.Annotation()
 	}
-	for r := range res2 {
-		out2 = append(out2, r)
-	}
-	if len(out1) < 1 {
-		return 0, out2[0]
-	} else if len(out2) < 1 {
-		return out1[0], 0
-	} else if len(out1) < 1 && len(out2) < 1 {
-		return 0, 0
-	}
-	return out1[0], out2[0]
+	return outData
 }
 
-func calculateAwesome(highs []float64, lows []float64) float64 {
-	pp.Println(highs, lows)
-	awsm := momentum.NewAwesomeOscillator[float64]()
-	h := make(chan float64)
-	l := make(chan float64)
-	go func() {
-		for _, v := range highs {
-			h <- v
+func calculateGC(hr []hrecord.HRecord, period int) string {
+	smoothing := 2
+	open := hr[0].AvgPrice
+	high := hr[0].Max
+	low := hr[0].Min
+	lastClose := hr[len(hr)-1].AvgPrice
+	volume := 0
+	for _, v := range hr {
+		if high < v.Max {
+			high = v.Max
 		}
-		close(h)
-	}()
-	go func() {
-		for _, v := range lows {
-			l <- v
+		if low > v.Min {
+			low = v.Min
 		}
-		close(l)
+		volume += int(v.Amount)
+	}
+	gc := trend.NewGoldenCrossStrategy()
+	gc.FastEma.Period = period
+	gc.SlowEma.Period = period
+	gc.SlowEma.Smoothing = float64(smoothing)
+	gc.SlowEma.Smoothing = float64(smoothing)
+	s := make(chan *asset.Snapshot)
+	go func() {
+		defer close(s)
+		newDate, err := time.Parse("2006-01-02", hr[0].Date)
+		if err != nil {
+			return
+		}
+		s <- &asset.Snapshot{
+			Date:   newDate,
+			Open:   float64(open),
+			High:   float64(high),
+			Close:  float64(lastClose),
+			Volume: float64(volume),
+		}
 	}()
-	res := awsm.Compute(h, l)
-	var out []float64
-	for r := range res {
-		out = append(out, r)
+	x := gc.Compute(s)
+	outData := ""
+	for r := range x {
+		outData = r.Annotation()
 	}
-	if len(out) < 1 {
-		return 0
-	}
-	return out[0]
+	return outData
 }
 
-func calculateStochastic(highs []float64, lows []float64, closings []float64) (float64, float64) {
-	sthc := momentum.NewStochasticOscillator[float64]()
-	h := make(chan float64)
-	l := make(chan float64)
-	c := make(chan float64)
-	go func() {
-		for _, v := range highs {
-			h <- v
+func calculateVWMAStrat(hr []hrecord.HRecord, period int) string {
+	open := hr[0].AvgPrice
+	high := hr[0].Max
+	low := hr[0].Min
+	lastClose := hr[len(hr)-1].AvgPrice
+	volume := 0
+	for _, v := range hr {
+		if high < v.Max {
+			high = v.Max
 		}
-		close(h)
-	}()
-	go func() {
-		for _, v := range lows {
-			l <- v
+		if low > v.Min {
+			low = v.Min
 		}
-		close(l)
-	}()
+		volume += int(v.Amount)
+	}
+	vwma := trend.NewVwmaStrategy()
+	vwma.Sma.Period = period
+	vwma.Vwma.Period = period
+	s := make(chan *asset.Snapshot)
 	go func() {
-		for _, v := range closings {
-			c <- v
+		defer close(s)
+		newDate, err := time.Parse("2006-01-02", hr[0].Date)
+		if err != nil {
+			return
 		}
-		close(c)
+		s <- &asset.Snapshot{
+			Date:   newDate,
+			Open:   float64(open),
+			High:   float64(high),
+			Close:  float64(lastClose),
+			Volume: float64(volume),
+		}
 	}()
-	res1, res2 := sthc.Compute(h, l, c)
-	var out1 []float64
-	var out2 []float64
-	for r := range res1 {
-		out1 = append(out1, r)
+	x := vwma.Compute(s)
+	outData := ""
+	for r := range x {
+		outData = r.Annotation()
 	}
-	for r := range res2 {
-		out2 = append(out2, r)
-	}
-	if len(out1) < 1 && len(out2) < 1 {
-		return 0, 0
-	} else if len(out1) < 1 {
-		return 0, out2[0]
-	} else if len(out2) < 1 {
-		return out1[0], 0
-	}
-	return out1[0], out2[0]
+	return outData
 }
 
-func calculateRsi(closings []float64) float64 {
-	pp.Println(closings)
-	rsi := momentum.NewRsi[float64]()
-	c := make(chan float64)
-	go func() {
-		for _, v := range closings {
-			c <- v
+func calculateBop(hr []hrecord.HRecord) string {
+	open := hr[0].AvgPrice
+	high := hr[0].Max
+	low := hr[0].Min
+	lastClose := hr[len(hr)-1].AvgPrice
+	volume := 0
+	for _, v := range hr {
+		if high < v.Max {
+			high = v.Max
 		}
-		close(c)
+		if low > v.Min {
+			low = v.Min
+		}
+		volume += int(v.Amount)
+	}
+	bop := trend.NewBopStrategy()
+	s := make(chan *asset.Snapshot)
+	go func() {
+		defer close(s)
+		newDate, err := time.Parse("2006-01-02", hr[0].Date)
+		if err != nil {
+			return
+		}
+		s <- &asset.Snapshot{
+			Date:   newDate,
+			Open:   float64(open),
+			High:   float64(high),
+			Close:  float64(lastClose),
+			Volume: float64(volume),
+		}
 	}()
-	res := rsi.Compute(c)
-	var out []float64
-	for r := range res {
-		out = append(out, r)
+	x := bop.Compute(s)
+	outData := ""
+	for r := range x {
+		outData = r.Annotation()
 	}
-	if len(out) < 1 {
-		return 0
-	}
-	return out[0]
+	return outData
 }

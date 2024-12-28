@@ -4,7 +4,6 @@ import (
 	"stocktrust/pkg/hrecord"
 
 	"github.com/cinar/indicator/v2/trend"
-	"github.com/k0kubun/pp"
 )
 
 // Calculates indicators - sma, ema, wma, vwma, hma
@@ -20,11 +19,11 @@ func CalculateIndicators(hr []hrecord.HRecord) (float64, float64, float64, float
 	wma := calculateWMA(polts)
 	vwma := calculateVWMA(polts, amounts)
 	hma := calculateHMA(polts)
-	pp.Println(sma)
-	pp.Println(ema)
-	pp.Println(wma)
-	pp.Println(vwma)
-	pp.Println(hma)
+	// pp.Println(sma)
+	// pp.Println(ema)
+	// pp.Println(wma)
+	// pp.Println(vwma)
+	// pp.Println(hma)
 	return sma, ema, wma, vwma, hma
 }
 

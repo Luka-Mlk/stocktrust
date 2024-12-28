@@ -139,6 +139,7 @@ func GetRecordsByTkrAndTimeframe(tkr string, days int) ([]HRecord, error) {
 	if !rows.Next() {
 		return nil, errors.New("record for ticker not found")
 	}
+	defer rows.Close()
 	var hrecords []HRecord
 	for rows.Next() {
 		var h HRecord
