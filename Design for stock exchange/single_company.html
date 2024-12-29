@@ -3,62 +3,90 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Company Info</title>
+  <title>Company Info Extended</title>
   <link rel="stylesheet" href="single_company.css">
 </head>
 <body>
-    <div class="header">
-
-        <div> <!--left side of header-->
-            <div class="logo">
-            <a href="home.html"><img src="image.png" alt="Logo"></a>
-            <h1>Stock Trust Analysis Macedonia</h1>
-            </div>
-        </div>
-        <div class="right-side"><!--right side of header-->
-            <div class="search-bar">
-              <input type="text" placeholder="Search...">
-              <button>🔍</button>
-            </div>
-        
-            <div class="dropdown">
-                <button class="dropbtn">☰</button>
-                <div class="dropdown-content">
-                    <a href="companies.html">companies</a>
-                </div>
-              </div>
-        
-          </div>
-        </div>
-    
-
-
-  <div class="content">
-    <div class="company-info">
-      <div class="info-section">
-        <h2>Company Name</h2>
-        <p><strong>Contact Information</strong></p>
-        <p>• Telephone: +38970 000 000</p>
-        <p>• Alternative number: +38971 000 000</p>
-        <p>• Email: company@company.com</p>
-        <p>• Person of contact: FirstName LastName</p>
-      </div>
-      <div class="last-trade">
-        <h3>Last Trade</h3>
-        <p><strong>Information of last trade:</strong></p>
-        <ul>
-          <li>Date</li>
-          <li>Last trade price</li>
-          <li>Max, min, avg price</li>
-          <li>% Change</li>
-          <li>Volume</li>
-          <li>Turnover best</li>
-          <li>Total turnover</li>
-        </ul>
+  <div class="header">
+    <div class="logo">
+      <img src="logo.png" alt="Logo">
+      <h1>Stock Trust Analysis Macedonia</h1>
+    </div>
+    <div class="search-bar">
+      <input type="text" placeholder="Search...">
+      <button>🔍</button>
+      <button id="dropdown-button">☰</button>
+      <div id="dropdown-menu" class="hidden">
+        <a href="#">Option 1</a>
+        <a href="#">Option 2</a>
+        <a href="#">Option 3</a>
       </div>
     </div>
   </div>
 
+  <div class="content">
+    <div class="company-info-extended">
+      <div class="top-section">
+        <div class="left-section">
+          <h2>Company Name</h2>
+          <p><strong>Contact Information</strong></p>
+          <p>• Telephone: +38970 000 000</p>
+          <p>• Alternative number: +38971 000 000</p>
+          <p>• Email: company@company.com</p>
+          <p>• Person of contact: FirstName LastName</p>
+        </div>
+        <div class="right-section">
+          <div class="recommendation">
+            <h3>Our Current Recommendation</h3>
+            <p>Short description of why to buy or sell</p>
+          </div>
+          <div class="news">
+            <h3>Current Standing in the News</h3>
+            <p>Some explanation</p>
+          </div>
+        </div>
+      </div>
+      <div class="period-data">
+        <div class="period-card">
+          <h4>DAY Period</h4>
+          <ul>
+            <li>Data point 1</li>
+            <li>Data point 2</li>
+            <li>Data point 3</li>
+            <li>Data point 4</li>
+          </ul>
+        </div>
+        <div class="period-card">
+          <h4>Week Period</h4>
+          <ul>
+            <li>Data point 1</li>
+            <li>Data point 2</li>
+            <li>Data point 3</li>
+            <li>Data point 4</li>
+          </ul>
+        </div>
+        <div class="period-card">
+          <h4>Month Period</h4>
+          <ul>
+            <li>Data point 1</li>
+            <li>Data point 2</li>
+            <li>Data point 3</li>
+            <li>Data point 4</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    
+    
+  </div>
 
+  <script>
+    const dropdownButton = document.getElementById('dropdown-button');
+    const dropdownMenu = document.getElementById('dropdown-menu');
+
+    dropdownButton.addEventListener('click', () => {
+      dropdownMenu.classList.toggle('hidden');
+    });
+  </script>
 </body>
 </html>
