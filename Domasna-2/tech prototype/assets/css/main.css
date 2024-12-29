@@ -1,0 +1,26 @@
+@import "header/header.css";
+@import "body/body.css";
+@import "company_info/company_info.css";
+@import "company_details/company_details.css";
+@import "top_companies/top_companies.css";
+@import "404/404.css";
+
+:root {
+    --clr-bg-1: #222;
+    --clr-bg-2: #444;
+    --clr-bg-3: #555;
+    --clr-link: #98b6b1;
+    --clr-txt: #ddd;
+    --clr-border: #777;
+}
+
+* {
+    padding: 0;
+    margin: 0;
+}
+
+a {
+    text-decoration: none;
+    color: var(--clr-link);
+    font-weight: 650;
+}

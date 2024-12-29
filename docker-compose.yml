@@ -1,5 +1,6 @@
 services:
   postgres:
+    container_name: stocktrust
     image: postgres
     ports:
       - 5432:5432
