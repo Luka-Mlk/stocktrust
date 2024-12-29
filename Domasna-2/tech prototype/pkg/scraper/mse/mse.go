@@ -2,10 +2,8 @@ package scraper
 
 import (
 	"log"
-	"os"
 	"runtime/debug"
 	"stocktrust/pkg/queue/dbq"
-	"strconv"
 	"sync"
 )
 
@@ -13,13 +11,7 @@ func Init() error {
 	q := dbq.DBQueue()
 	q.Init()
 	var wg sync.WaitGroup
-	threads := os.Getenv("NUM_THREADS")
-	threadsInt, err := strconv.Atoi(threads)
-	if err != nil {
-		log.Println(err)
-		debug.PrintStack()
-		return err
-	}
+	threadsInt := 20
 	// FILTER NO 1 - get all tickers from website
 	tkrs, err := GetTickers()
 	if err != nil {
