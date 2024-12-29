@@ -1,0 +1,141 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #222;
+    color: #ddd;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #444;
+    padding: 10px 20px;
+  }
+  
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .logo img {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .search-bar {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    position: relative;
+  }
+  
+  .search-bar input {
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #777;
+  }
+  
+  .search-bar button {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #555;
+    color: #ddd;
+    cursor: pointer;
+  }
+  
+  .hidden {
+    display: none;
+  }
+  
+  .content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px;
+  }
+  
+  .company-info-extended {
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+    background-color: #333;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    gap: 20px; 
+  }
+  
+  .top-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  
+  .left-section {
+    flex: 1;
+  }
+  
+  .right-section {
+    flex: 1; 
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .right-section > div {
+    background-color: #444; 
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+  }
+  
+  .right-section h3 {
+    margin-top: 0;
+    color: #ffcc00; 
+  }
+  
+  .period-data {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  
+  .period-card {
+    background-color: #444;
+    padding: 15px;
+    border-radius: 10px;
+    width: 30%;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+  }
+  
+  .period-card h4 {
+    margin: 0 0 10px 0;
+    color: #ffcc00;
+  }
+  
+  
+  .period-card ul, .right-section ul {
+    list-style-type: none; 
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px; 
+  }
+  
+  .period-card ul li, .right-section ul li {
+    background-color: #555; 
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  }
+  
+  
+  .period-card ul li:hover, .right-section ul li:hover {
+    background-color: #666; 
+    cursor: pointer; 
+  }
