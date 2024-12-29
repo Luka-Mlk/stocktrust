@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+    {{template "partials/head" .}}
+    <body>
+        {{template "partials/header" .}}
+        <main id="company-info">
+            <!-- Main Company Info Section -->
+            <div class="company-info-extended">
+                <!-- Top Section -->
+                <div class="top-section">
+                    <!-- Left Section: Contact Info -->
+                    <div class="info-section left-section">
+                        <h2>{{.Company.Name}}</h2>
+                        <p><b>Contact Information</b></p>
+                        <p>• Telephone: {{.Company.Phone}}</p>
+                        <p>• Alternative number: {{.Company.Fax}}</p>
+                        <p>• Email: {{.Company.Email}}</p>
+                        <p>• Person of contact: {{.Company.ContactName}}</p>
+                    </div>
+
+                    <!-- Right Section: Recommendations and News -->
+                    <div class="right-section">
+                        <div class="recommendation-widget">
+                            <h3>Our Current Recommendation</h3>
+                            <div class="recommendation" id="recommendation">
+                                <span class="recommendation">Loading...</span>
+                            </div>
+                            <p class="details">
+                                This recommendation is based on technical analysis and
+                                market trends and is not financial advice.
+                            </p>
+                        </div>
+                        <div class="news-widget">
+                            <h3>Current Standing in the News</h3>
+                            <p>Some explanation</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Section: Period Data -->
+                <div class="period-data">
+                    <!-- Day Period -->
+                    <div class="period-card">
+                        <h4>DAY Period</h4>
+                        <ul>
+                            <li>Data point 1</li>
+                            <li>Data point 2</li>
+                            <li>Data point 3</li>
+                            <li>Data point 4</li>
+                        </ul>
+                    </div>
+
+                    <!-- Week Period -->
+                    <div class="period-card">
+                        <h4>Week Period</h4>
+                        <ul>
+                            <li>Data point 1</li>
+                            <li>Data point 2</li>
+                            <li>Data point 3</li>
+                            <li>Data point 4</li>
+                        </ul>
+                    </div>
+
+                    <!-- Month Period -->
+                    <div class="period-card">
+                        <h4>Month Period</h4>
+                        <ul>
+                            <li>Data point 1</li>
+                            <li>Data point 2</li>
+                            <li>Data point 3</li>
+                            <li>Data point 4</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </body>
+</html>
