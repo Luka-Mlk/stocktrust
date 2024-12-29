@@ -18,23 +18,64 @@
 
                 <!-- Right Section: Recommendations and News -->
                 <div class="right-section">
-                    <!-- <div class="recommendation-widget">
-                        <h3>Our Current Recommendation</h3>
-                        <div class="recommendation" id="recommendation">
-                            <span class="recommendation">Loading...</span>
-                        </div>
-                        <p class="details">
-                            This recommendation is based on technical analysis
-                            and market trends and is not financial advice.
-                        </p>
-                    </div> -->
                     <div class="news-widget">
                         <h3>Current Standing in the News</h3>
-                        <p>Some explanation</p>
+                        <!-- <p>Some explanation</p> -->
+
+                        {{ if .MonthRecommend }}
+                        <!-- Check if .MonthRecommend is not nil -->
+                        {{ if .MonthRecommend.MACD }}
+                        <!-- Check if .MonthRecommend.MACD is not nil or empty -->
+                        <!-- Check for specific recommendations -->
+                        {{ if or (eq .MonthRecommend.MACD "Sell") (eq
+                        .MonthRecommend.MACD "Hard Sell") }}
+                        <br />
+                        <p>Poor</p>
+                        <p>
+                            Market recommendation is negative this month. Please
+                            exercise caution.
+                        </p>
+                        {{ else if eq .MonthRecommend.MACD "Buy" }}
+                        <br />
+                        <p>Good</p>
+                        <p>
+                            Market recommendation is positive this month. It's a
+                            good time to invest.
+                        </p>
+                        {{ else if eq .MonthRecommend.MACD "Hold" }}
+                        <br />
+                        <p>Neutral</p>
+                        <p>
+                            The recommendation is to hold. No strong indications
+                            for action.
+                        </p>
+                        {{ else }}
+                        <br />
+                        <p>Unknown</p>
+                        <p>
+                            No market recommendation available this month.
+                            Please check back later.
+                        </p>
+                        {{ end }} {{ else }}
+                        <!-- Case where .MonthRecommend.MACD is nil or empty -->
+                        <br />
+                        <p>Unknown</p>
+                        <p>
+                            No market recommendation available this month.
+                            Please check back later.
+                        </p>
+                        {{ end }} {{ else }}
+                        <!-- Case where .MonthRecommend is nil -->
+                        <br />
+                        <p>Unknown</p>
+                        <p>
+                            No market recommendation available this month.
+                            Please check back later.
+                        </p>
+                        {{ end }}
                     </div>
                 </div>
             </div>
-
             <!-- Bottom Section: Period Data -->
             <div class="period-data">
                 <!-- Day Period -->
