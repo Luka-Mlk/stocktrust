@@ -36,7 +36,7 @@ func CompanyDetails(c *fiber.Ctx) error {
 	company, err := company.GetDetailsByTkr(tkr)
 	if err != nil {
 		log.Println("error getting company details page: ", err)
-		return c.SendStatus(502)
+		return c.Render("views/404", nil)
 	}
 	recordsDayBack, err := hrecord.GetRecordsByTkrAndTimeframe(tkr, 1)
 	if err != nil && err.Error() != "record for ticker not found" {
