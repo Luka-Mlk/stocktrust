@@ -1,0 +1,36 @@
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-family: Arial, sans-serif;
+    background-color: var(--clr-bg-1);
+}
+
+:root {
+    --buy-color: #28a745;
+    --hold-color: #ffc107;
+    --sell-color: #dc3545;
+    --bg-color: #222;
+    --text-color: #ddd;
+    --widget-bg: #333;
+    --clr-bg-1: #222;
+    --clr-bg-2: #444;
+    --clr-bg-3: #555;
+    --clr-link: #98b6b1;
+    --clr-txt: #ddd;
+    --clr-border: #777;
+}
+
+* {
+    padding: 0px;
+    margin: 0px;
+    box-sizing: border-box;
+}
+
+a {
+    text-decoration: none;
+    color: var(--clr-link);
+    font-weight: 650;
+}

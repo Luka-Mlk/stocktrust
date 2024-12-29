@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"runtime/debug"
 	"stocktrust/pkg/hrecord"
 	"stocktrust/pkg/queue/dbq"
 	hrecfmt "stocktrust/pkg/strings/formatter/hrecord"
@@ -30,27 +29,24 @@ func updateHrForTicker(tkr string, lDate time.Time) error {
 		data.Set("Code", tkr)
 		res, err := http.Post(end, ctyp, strings.NewReader(data.Encode()))
 		if err != nil {
-			log.Println(err)
-			debug.PrintStack()
-			return err
+			e := fmt.Errorf("error making post request to %s:\n%s", end, err)
+			return e
 		}
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
-			log.Println(err)
-			debug.PrintStack()
-			return err
+			e := fmt.Errorf("error reading body from %s:\n%s", end, err)
+			return e
 		}
 		fName := "pkg/scraper/mse/html/history.html"
 		err = os.WriteFile(fName, body, 0660)
 		if err != nil {
-			log.Print(err)
-			debug.PrintStack()
-			return err
+			e := fmt.Errorf("error writing to file %s:\n%s", fName, err)
+			return e
 		}
 		err = scrapeFile(fName, tkr)
 		if err != nil {
-			log.Println(err)
-			return err
+			e := fmt.Errorf("error scraping from %s:\n%s", end, err)
+			return e
 		}
 		lDate = lDatePlus
 		if lDatePlus.After(cdate) {
@@ -77,22 +73,19 @@ func getHrListForTicker(tkr string, group int) error {
 		}
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
-			log.Println(err)
-			debug.PrintStack()
-			return err
+			e := fmt.Errorf("error reading body from %s:\n%s", end, err)
+			return e
 		}
 		fName := fmt.Sprintf("pkg/scraper/mse/html/history-group-%v.html", group)
 		err = os.WriteFile(fName, body, 0660)
 		if err != nil {
-			log.Print(err)
-			debug.PrintStack()
-			return err
+			e := fmt.Errorf("error writing to file %s:\n%s", fName, err)
+			return e
 		}
 		err = scrapeFile(fName, tkr)
 		if err != nil {
-			log.Println(err)
-			debug.PrintStack()
-			return err
+			e := fmt.Errorf("error scraping from %s:\n%s", end, err)
+			return e
 		}
 		cdate = cdate.AddDate(0, 0, -365)
 	}
