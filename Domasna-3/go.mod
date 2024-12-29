@@ -11,6 +11,7 @@ require (
 	github.com/gofiber/template/html/v2 v2.1.2
 	github.com/jackc/pgx/v5 v5.7.1
 	github.com/k0kubun/pp v3.0.1+incompatible
+	github.com/k0kubun/pp/v3 v3.4.1
 	github.com/rs/xid v1.6.0
 )
 

@@ -53,18 +53,23 @@ func CompanyDetails(c *fiber.Ctx) error {
 		log.Println("error getting comapny details page: ", err)
 		return c.SendStatus(502)
 	}
+	var strategyDay *indicators.Recommendation
+	var strategyWeek *indicators.Recommendation
+	var strategyMonth *indicators.Recommendation
 	if len(recordsDayBack) > 1 {
-		indicators.CalculateOscillators(recordsDayBack)
+		strategyDay = indicators.CalculateOscillators(recordsDayBack)
 	}
 	if len(recordsWeekBack) > 1 {
-		indicators.CalculateOscillators(recordsWeekBack)
+		strategyWeek = indicators.CalculateOscillators(recordsWeekBack)
 	}
 	if len(recordsMonthBack) > 1 {
-		indicators.CalculateOscillators(recordsMonthBack)
+		strategyMonth = indicators.CalculateOscillators(recordsMonthBack)
 	}
 	return c.Render("views/company", fiber.Map{
-		"Company": company,
-		// "Recommendation": data,
+		"Company":        company,
+		"DayRecommend":   strategyDay,
+		"WeekRecommend":  strategyWeek,
+		"MonthRecommend": strategyMonth,
 	})
 }
 

@@ -40,34 +40,49 @@
                 <!-- Day Period -->
                 <div class="period-card">
                     <h4>DAY Period</h4>
+                    {{if .DayRecommend}}
                     <ul>
-                        <li>Data point 1</li>
-                        <li>Data point 2</li>
-                        <li>Data point 3</li>
-                        <li>Data point 4</li>
+                        <li>CCI: {{.DayRecommend.CCI}}</li>
+                        <li>MACD: {{.DayRecommend.MACD}}</li>
+                        <li>GC: {{.DayRecommend.GC}}</li>
+                        <li>VWMA: {{.DayRecommend.VWMA}}</li>
+                        <li>BOP: {{.DayRecommend.BOP}}</li>
                     </ul>
+                    {{else}}
+                    <p>No recommendation for this period</p>
+                    {{end}}
                 </div>
 
                 <!-- Week Period -->
                 <div class="period-card">
                     <h4>Week Period</h4>
+                    {{if .WeekRecommend}}
                     <ul>
-                        <li>Data point 1</li>
-                        <li>Data point 2</li>
-                        <li>Data point 3</li>
-                        <li>Data point 4</li>
+                        <li>CCI: {{.WeekRecommend.CCI}}</li>
+                        <li>MACD: {{.WeekRecommend.MACD}}</li>
+                        <li>GC: {{.WeekRecommend.GC}}</li>
+                        <li>VWMA: {{.WeekRecommend.VWMA}}</li>
+                        <li>BOP: {{.WeekRecommend.BOP}}</li>
                     </ul>
+                    {{else}}
+                    <p>No recommendation for this period</p>
+                    {{end}}
                 </div>
 
                 <!-- Month Period -->
                 <div class="period-card">
                     <h4>Month Period</h4>
+                    {{if .MonthRecommend}}
                     <ul>
-                        <li>Data point 1</li>
-                        <li>Data point 2</li>
-                        <li>Data point 3</li>
-                        <li>Data point 4</li>
+                        <li>CCI: {{.MonthRecommend.CCI}}</li>
+                        <li>MACD: {{.MonthRecommend.MACD}}</li>
+                        <li>GC: {{.MonthRecommend.GC}}</li>
+                        <li>VWMA: {{.MonthRecommend.VWMA}}</li>
+                        <li>BOP: {{.MonthRecommend.BOP}}</li>
                     </ul>
+                    {{else}}
+                    <p>No recommendation for this period</p>
+                    {{end}}
                 </div>
             </div>
         </main>

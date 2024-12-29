@@ -6,10 +6,32 @@ import (
 
 	"github.com/cinar/indicator/v2/asset"
 	"github.com/cinar/indicator/v2/strategy/trend"
+	"github.com/k0kubun/pp/v3"
 )
 
-// Calculates oscillators - wr, macd1, macd2, awsm, stoch1, stoch2, rsi
-func CalculateOscillators(hr []hrecord.HRecord) (string, string, string, string, string) {
+type Recommendation struct {
+	CCI  string
+	MACD string
+	GC   string
+	VWMA string
+	BOP  string
+}
+
+func parseRecommendation(recommendation string) string {
+	if recommendation == "" {
+		return "Hold"
+	}
+	if recommendation == "S" {
+		return "Sell"
+	}
+	if recommendation == "b" {
+		return "Buy"
+	}
+	return ""
+}
+
+// Calculates oscillators - cci, macd, gc, vwma, bop
+func CalculateOscillators(hr []hrecord.HRecord) *Recommendation {
 	highs := []float64{}
 	lows := []float64{}
 	closings := []float64{}
@@ -23,8 +45,27 @@ func CalculateOscillators(hr []hrecord.HRecord) (string, string, string, string,
 	gc := calculateGC(hr, len(hr))
 	vwma := calculateVWMAStrat(hr, len(hr))
 	bop := calculateBop(hr)
+	pp.Println(bop)
 
-	return cci, macd, gc, vwma, bop
+	cci = parseRecommendation(cci)
+	macd = parseRecommendation(macd)
+	gc = parseRecommendation(gc)
+	vwma = parseRecommendation(vwma)
+	bop = parseRecommendation(bop)
+	pp.Println(&Recommendation{
+		CCI:  cci,
+		MACD: macd,
+		GC:   gc,
+		VWMA: vwma,
+		BOP:  bop,
+	})
+	return &Recommendation{
+		CCI:  cci,
+		MACD: macd,
+		GC:   gc,
+		VWMA: vwma,
+		BOP:  bop,
+	}
 }
 
 func calculateCCI(hr []hrecord.HRecord, period int) string {
