@@ -70,34 +70,29 @@ func GetLatestTkrDate(tkr string) (time.Time, error) {
 		return time.Time{}, errors.New("record for ticker not found")
 	}
 	var data time.Time
-	for rows.Next() {
-		err = rows.Scan(&data)
-		if err != nil {
-			log.Println(err)
-		}
-	}
+	rows.Scan(&data)
 	return data, nil
 }
 
 // ======== SQL QUERIES ========
 
 const insert string = `
-	INSERT INTO history_records 
+	INSERT INTO history_records
 		(
 			id,
-			date, 
-			ticker, 
-			price_last_transaction, 
-			max, 
-			min, 
-			average_price, 
-			revenue_percent, 
+			date,
+			ticker,
+			price_last_transaction,
+			max,
+			min,
+			average_price,
+			revenue_percent,
 			amount,
 			revenue_best,
 			revenue_total,
 			currency
 		)
-	VALUES 
+	VALUES
 		($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
 `
 
