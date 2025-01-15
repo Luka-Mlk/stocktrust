@@ -110,13 +110,7 @@ func GetLatestTkrDate(tkr string) (time.Time, error) {
 		return time.Time{}, errors.New("record for ticker not found")
 	}
 	var data time.Time
-	for rows.Next() {
-		err = rows.Scan(&data)
-		if err != nil {
-			e := fmt.Errorf("error executing query:\n%s", err)
-			return time.Time{}, e
-		}
-	}
+	rows.Scan(&data)
 	return data, nil
 }
 
