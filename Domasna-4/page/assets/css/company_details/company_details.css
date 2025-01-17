@@ -1,0 +1,153 @@
+.companies-list {
+    display: grid;
+    grid-template-columns: repeat(
+        auto-fill,
+        minmax(280px, 1fr)
+    ); /* Flexible grid */
+    gap: 20px;
+    width: 100%;
+}
+
+#company-list {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    max-width: 1200px; /* Optional max-width for large screens */
+    padding: 20px;
+    color: var(--clr-txt);
+}
+
+.company-card {
+    background-color: #333;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    color: var(--clr-txt);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.company-card h3 {
+    font-size: 20px;
+    color: #ffcc00;
+    margin-bottom: 10px;
+}
+
+.company-card p {
+    margin-bottom: 10px;
+}
+
+.company-card a {
+    color: #ffcc00;
+    text-decoration: none;
+}
+
+.company-card a:hover {
+    text-decoration: underline;
+}
+
+.details-link {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #444;
+    border-radius: 5px;
+    color: var(--clr-txt);
+    text-align: center;
+    text-decoration: none;
+}
+
+.details-link:hover {
+    background-color: #555;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px;
+}
+
+.company-info-extended {
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+    background-color: #333;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    gap: 20px;
+}
+
+.top-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.left-section {
+    flex: 1;
+}
+
+.right-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.right-section > div {
+    background-color: #444;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+}
+
+.right-section h3 {
+    margin-top: 0;
+    color: #ffcc00;
+}
+
+.period-data {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.period-card {
+    background-color: #444;
+    padding: 15px;
+    border-radius: 10px;
+    width: 30%;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+}
+
+.period-card h4 {
+    margin: 0 0 10px 0;
+    color: #ffcc00;
+}
+
+.period-card ul,
+.right-section ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.period-card ul li,
+.right-section ul li {
+    background-color: #555;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.period-card ul li:hover,
+.right-section ul li:hover {
+    background-color: #666;
+    cursor: pointer;
+}
