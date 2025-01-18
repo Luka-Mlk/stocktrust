@@ -3,6 +3,8 @@ package handlers
 import (
 	"log"
 	"msemk/pkg/company"
+	"msemk/pkg/hrecord"
+	"msemk/pkg/indicators"
 	"msemk/pkg/queue/dbq"
 
 	"github.com/gofiber/fiber/v2"
@@ -34,11 +36,34 @@ func GetCompany(c *fiber.Ctx) error {
 		log.Printf("error getting company by ticker: %v", err)
 		return c.SendStatus(500)
 	}
-	// request day period calculation
-	// request week period calculation
-	// request month period calculation
-	// request news standing
-	newCmp := company.NewCompanyDetaildResponse(cmp, dayPeriod string, weekPeriod string, monthPeriod string, newsStanding string)
+	recordsDay, err := hrecord.GetRecordsByTkrAndTimeframe(ticker, 1)
+	if err != nil && err.Error() != "record for ticker not found" {
+		log.Printf("error getting records by ticker %s and timeframe %d: %v\n", ticker, 30, err)
+		return c.SendStatus(500)
+	}
+	recordsWeek, err := hrecord.GetRecordsByTkrAndTimeframe(ticker, 7)
+	if err != nil && err.Error() != "record for ticker not found" {
+		log.Printf("error getting records by ticker %s and timeframe %d: %v\n", ticker, 30, err)
+		return c.SendStatus(500)
+	}
+	recordsMonth, err := hrecord.GetRecordsByTkrAndTimeframe(ticker, 30)
+	if err != nil && err.Error() != "record for ticker not found" {
+		log.Printf("error getting records by ticker %s and timeframe %d: %v\n", ticker, 30, err)
+		return c.SendStatus(500)
+	}
+	var strategyDay indicators.Recommendation
+	var strategyWeek indicators.Recommendation
+	var strategyMonth indicators.Recommendation
+	if len(recordsDay) > 1 {
+		strategyDay = indicators.CalculateOscillators(recordsDay)
+	}
+	if len(recordsWeek) > 1 {
+		strategyWeek = indicators.CalculateOscillators(recordsWeek)
+	}
+	if len(recordsMonth) > 1 {
+		strategyMonth = indicators.CalculateOscillators(recordsMonth)
+	}
+	newCmp := company.NewCompanyDetaildResponse(cmp, strategyDay, strategyWeek, strategyMonth, "newsStanding")
 	return c.Status(200).JSON(newCmp)
 }
 

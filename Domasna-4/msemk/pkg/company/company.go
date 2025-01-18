@@ -3,6 +3,7 @@ package company
 import (
 	"encoding/json"
 	"log"
+	"msemk/pkg/indicators"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/rs/xid"
@@ -31,28 +32,28 @@ type Company struct {
 }
 
 type CompanyDetailedResponse struct {
-	Id           string `json:"id,omitempty"`
-	Name         string `json:"name" validate:"required"`
-	Address      string `json:"address" validate:"required"`
-	City         string `json:"city" validate:"required"`
-	Country      string `json:"country" validate:"required"`
-	Email        string `json:"email" validate:"email"`
-	Website      string `json:"website"`
-	ContactName  string `json:"contact_name"`
-	ContactPhone string `json:"contact_phone"`
-	ContactEmail string `json:"contact_email" validate:"email"`
-	Phone        string `json:"phone"`
-	Fax          string `json:"fax"`
-	Prospect     string `json:"prospect"`
-	Ticker       string `json:"ticker" validate:"alphanum"`
-	URL          string `json:"url" validate:"required"`
-	DayPeriod    string `json:"day_period_recommendation"`
-	WeekPeriod   string `json:"week_period_recommendation"`
-	MonthPeriod  string `json:"month_period_recommendation"`
-	NewsStanding string `json:"news_standing"`
+	Id           string                    `json:"id,omitempty"`
+	Name         string                    `json:"name" validate:"required"`
+	Address      string                    `json:"address" validate:"required"`
+	City         string                    `json:"city" validate:"required"`
+	Country      string                    `json:"country" validate:"required"`
+	Email        string                    `json:"email" validate:"email"`
+	Website      string                    `json:"website"`
+	ContactName  string                    `json:"contact_name"`
+	ContactPhone string                    `json:"contact_phone"`
+	ContactEmail string                    `json:"contact_email" validate:"email"`
+	Phone        string                    `json:"phone"`
+	Fax          string                    `json:"fax"`
+	Prospect     string                    `json:"prospect"`
+	Ticker       string                    `json:"ticker" validate:"alphanum"`
+	URL          string                    `json:"url" validate:"required"`
+	DayPeriod    indicators.Recommendation `json:"day_period_recommendation"`
+	WeekPeriod   indicators.Recommendation `json:"week_period_recommendation"`
+	MonthPeriod  indicators.Recommendation `json:"month_period_recommendation"`
+	NewsStanding string                    `json:"news_standing"`
 }
 
-func NewCompanyDetaildResponse(c *Company, dayPeriod string, weekPeriod string, monthPeriod string, newsStanding string) *CompanyDetailedResponse {
+func NewCompanyDetaildResponse(c *Company, dayPeriod indicators.Recommendation, weekPeriod indicators.Recommendation, monthPeriod indicators.Recommendation, newsStanding string) *CompanyDetailedResponse {
 	return &CompanyDetailedResponse{
 		Id:           c.Id,
 		Name:         c.Name,
