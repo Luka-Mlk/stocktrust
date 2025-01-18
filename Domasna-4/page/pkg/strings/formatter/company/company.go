@@ -1,7 +1,7 @@
 package compfmt
 
 import (
-	"stocktrust/pkg/company"
+	"pages/pkg/company"
 	"strings"
 )
 

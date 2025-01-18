@@ -11,8 +11,11 @@
                         <tr>
                             <th>Ticker</th>
                             <th>Average price</th>
-                            <th>% Change</th>
+                            <th>Revenue percent</th>
                             <th>BEST</th>
+                            <th>Max</th>
+                            <th>Min</th>
+                            <th>Amount</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -24,6 +27,9 @@
                             <td>{{.AvgPrice}}</td>
                             <td>{{.RevenuePercent}}</td>
                             <td>{{.RevenueBEST}}</td>
+                            <td>{{.Max}}</td>
+                            <td>{{.Min}}</td>
+                            <td>{{.Amount}}</td>
                         </tr>
                         {{else}}
                         <tr>

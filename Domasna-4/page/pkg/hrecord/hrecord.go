@@ -10,18 +10,18 @@ import (
 )
 
 type HRecord struct {
-	Id             string
-	Date           string
-	Ticker         string
-	POLT           float32
-	Max            float32
-	Min            float32
-	AvgPrice       float32
-	RevenuePercent float32
-	Amount         float32
-	RevenueBEST    float32
-	RevenueTotal   float32
-	Currency       string
+	Id             string  `json:"id,omitempty"`
+	Date           string  `json:"date" validate:"required,valid-date"`
+	Ticker         string  `json:"ticker" validate:"required,alpha"`
+	POLT           float32 `json:"price_of_last_transaction" validate:"required,numeric"`
+	Max            float32 `json:"max" validate:"required,numeric"`
+	Min            float32 `json:"min" validate:"required,numeric"`
+	AvgPrice       float32 `json:"average_price" validate:"required,numeric"`
+	RevenuePercent float32 `json:"revenue_percent" validate:"required,numeric"`
+	Amount         float32 `json:"amount" validate:"required,numeric"`
+	RevenueBEST    float32 `json:"revenue_best" validate:"required,numeric"`
+	RevenueTotal   float32 `json:"revenue_total" validate:"required,numeric"`
+	Currency       string  `json:"currency" validate:"required,iso4217"`
 
 	persistences []Persistence
 }

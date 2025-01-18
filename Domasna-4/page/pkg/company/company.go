@@ -2,28 +2,51 @@ package company
 
 import (
 	"log"
+	"pages/pkg/indicators"
 
 	"github.com/rs/xid"
 )
 
 type Company struct {
-	Id           string
-	Name         string
-	Address      string
-	City         string
-	Country      string
-	Email        string
-	Website      string
-	ContactName  string
-	ContactPhone string
-	ContactEmail string
-	Phone        string
-	Fax          string
-	Prospect     string
-	Ticker       string
-	URL          string
+	Id           string `json:"id,omitempty"`
+	Name         string `json:"name" validate:"required"`
+	Address      string `json:"address" validate:"required"`
+	City         string `json:"city" validate:"required"`
+	Country      string `json:"country" validate:"required"`
+	Email        string `json:"email" validate:"email"`
+	Website      string `json:"website"`
+	ContactName  string `json:"contact_name"`
+	ContactPhone string `json:"contact_phone"`
+	ContactEmail string `json:"contact_email" validate:"email"`
+	Phone        string `json:"phone"`
+	Fax          string `json:"fax"`
+	Prospect     string `json:"prospect"`
+	Ticker       string `json:"ticker" validate:"alphanum"`
+	URL          string `json:"url" validate:"required"`
 
 	persistences []Persistence
+}
+
+type CompanyDetailedResponse struct {
+	Id           string                    `json:"id,omitempty"`
+	Name         string                    `json:"name" validate:"required"`
+	Address      string                    `json:"address" validate:"required"`
+	City         string                    `json:"city" validate:"required"`
+	Country      string                    `json:"country" validate:"required"`
+	Email        string                    `json:"email" validate:"email"`
+	Website      string                    `json:"website"`
+	ContactName  string                    `json:"contact_name"`
+	ContactPhone string                    `json:"contact_phone"`
+	ContactEmail string                    `json:"contact_email" validate:"email"`
+	Phone        string                    `json:"phone"`
+	Fax          string                    `json:"fax"`
+	Prospect     string                    `json:"prospect"`
+	Ticker       string                    `json:"ticker" validate:"alphanum"`
+	URL          string                    `json:"url" validate:"required"`
+	DayPeriod    indicators.Recommendation `json:"day_period_recommendation"`
+	WeekPeriod   indicators.Recommendation `json:"week_period_recommendation"`
+	MonthPeriod  indicators.Recommendation `json:"month_period_recommendation"`
+	NewsStanding string                    `json:"news_standing"`
 }
 
 type Persistence interface {

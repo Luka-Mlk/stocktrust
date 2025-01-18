@@ -30,3 +30,9 @@
 .last-trade ul {
     margin: 5px 0;
 }
+
+.strategy-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
