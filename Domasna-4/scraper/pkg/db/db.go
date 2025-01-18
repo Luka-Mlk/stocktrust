@@ -25,7 +25,7 @@ func Conn() (*pgxpool.Conn, error) {
 		user := os.Getenv("DATABASE_USER")
 		password := os.Getenv("DATABASE_PASSWORD")
 		host := os.Getenv("DATABASE_HOST")
-		port := os.Getenv("DATABAES_PORT")
+		port := os.Getenv("DATABASE_PORT")
 		dbname := os.Getenv("DATABASE_NAME")
 		connstr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s", user, password, host, port, dbname)
 		pgxConf, err := pgxpool.ParseConfig(connstr)
