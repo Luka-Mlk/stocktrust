@@ -1,0 +1,38 @@
+#company-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 90%;
+    background-color: #333;
+    color: var(--clr-txt);
+    border-radius: 15px;
+    margin: 20px;
+    padding: 50px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.trade-info {
+    color: #ffcc00;
+}
+
+.info-section,
+.last-trade {
+    width: 45%;
+}
+
+.info-section h2,
+.last-trade h3 {
+    margin-top: 0;
+    color: #ffcc00;
+}
+
+.info-section p,
+.last-trade ul {
+    margin: 5px 0;
+}
+
+.strategy-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}

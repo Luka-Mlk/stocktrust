@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+    {{template "partials/head" .}}
+    <body>
+        {{template "partials/header" .}}
+        <main id="company-info">
+            <!-- Top Section -->
+            <div class="top-section">
+                <!-- Left Section: Contact Info -->
+                <div class="info-section left-section">
+                    <h2>{{.Company.Name}}</h2>
+                    <p><b>Contact Information</b></p>
+                    <p>• Telephone: {{.Company.Phone}}</p>
+                    <p>• Alternative number: {{.Company.Fax}}</p>
+                    <p>• Email: {{.Company.Email}}</p>
+                    <p>• Person of contact: {{.Company.ContactName}}</p>
+                </div>
+
+                <!-- Right Section: Recommendations and News -->
+                <div class="right-section">
+                    <div class="news-widget">
+                        <h3>Current Standing in the News</h3>
+                        {{if and .Company.WeekPeriod (or .Company.WeekPeriod.CCI
+                        .Company.WeekPeriod.MACD .Company.WeekPeriod.GC
+                        .Company.WeekPeriod.VWMA .Company.WeekPeriod.BOP)}} {{if
+                        eq .Company.WeekPeriod.MACD "Sell"}}
+                        <p>Poor</p>
+                        <p>
+                            Company reputation is poor this week. Please
+                            exercise caution.
+                        </p>
+                        {{else if eq .Company.WeekPeriod.MACD "Buy"}}
+                        <p>Good</p>
+                        <p>
+                            Company reputation is positive this week. It's a
+                            good time to invest.
+                        </p>
+                        {{else if eq .Company.WeekPeriod.MACD "Hold"}}
+                        <p>Neutral</p>
+                        <p>
+                            Company reputation is neutral this week. No strong
+                            indications for action.
+                        </p>
+                        {{else}}
+                        <p>Unknown</p>
+                        <p>
+                            No significant news this week. Please check back
+                            later.
+                        </p>
+                        {{end}} {{else}}
+                        <p>Unknown</p>
+                        <p>
+                            No significant news this week. Please check back
+                            later.
+                        </p>
+                        {{end}}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Section: Period Data -->
+            <div class="period-data">
+                <!-- Day Period -->
+                <div class="period-card">
+                    <h4>Day Period</h4>
+                    {{if and .Company.DayPeriod (or .Company.DayPeriod.CCI
+                    .Company.DayPeriod.MACD .Company.DayPeriod.GC
+                    .Company.DayPeriod.VWMA .Company.DayPeriod.BOP)}}
+                    <ul class="strategy-list">
+                        <li>
+                            Commodity Channel Index:
+                            <p class="strategy-list-status">
+                                {{.Company.DayPeriod.CCI}}
+                            </p>
+                        </li>
+                        <li>
+                            Moving Average Convergence Divergence:
+                            <p class="strategy-list-status">
+                                {{.Company.DayPeriod.MACD}}
+                            </p>
+                        </li>
+                        <li>
+                            Gann Consensus:
+                            <p class="strategy-list-status">
+                                {{.Company.DayPeriod.GC}}
+                            </p>
+                        </li>
+                        <li>
+                            Volume Weighted Moving Average:
+                            <p class="strategy-list-status">
+                                {{.Company.DayPeriod.VWMA}}
+                            </p>
+                        </li>
+                        <li>
+                            Balance Of Power:
+                            <p class="strategy-list-status">
+                                {{.Company.DayPeriod.BOP}}
+                            </p>
+                        </li>
+                    </ul>
+                    {{else}}
+                    <p>No recommendation for this period</p>
+                    {{end}}
+                </div>
+
+                <!-- Week Period -->
+                <div class="period-card">
+                    <h4>Week Period</h4>
+                    {{if and .Company.WeekPeriod (or .Company.WeekPeriod.CCI
+                    .Company.WeekPeriod.MACD .Company.WeekPeriod.GC
+                    .Company.WeekPeriod.VWMA .Company.WeekPeriod.BOP)}}
+                    <ul class="strategy-list">
+                        <li>
+                            Commodity Channel Index:
+                            <p class="strategy-list-status">
+                                {{.Company.WeekPeriod.CCI}}
+                            </p>
+                        </li>
+                        <li>
+                            Moving Average Convergence Divergence:
+                            <p class="strategy-list-status">
+                                {{.Company.WeekPeriod.MACD}}
+                            </p>
+                        </li>
+                        <li>
+                            Gann Consensus:
+                            <p class="strategy-list-status">
+                                {{.Company.WeekPeriod.GC}}
+                            </p>
+                        </li>
+                        <li>
+                            Volume Weighted Moving Average:
+                            <p class="strategy-list-status">
+                                {{.Company.WeekPeriod.VWMA}}
+                            </p>
+                        </li>
+                        <li>
+                            Balance Of Power:
+                            <p class="strategy-list-status">
+                                {{.Company.WeekPeriod.BOP}}
+                            </p>
+                        </li>
+                    </ul>
+                    {{else}}
+                    <p>No recommendation for this period</p>
+                    {{end}}
+                </div>
+
+                <!-- Month Period -->
+                <div class="period-card">
+                    <h4>Month Period</h4>
+                    {{if and .Company.MonthPeriod (or .Company.MonthPeriod.CCI
+                    .Company.MonthPeriod.MACD .Company.MonthPeriod.GC
+                    .Company.MonthPeriod.VWMA .Company.MonthPeriod.BOP)}}
+                    <ul class="strategy-list">
+                        <li>
+                            Commodity Channel Index:
+                            <p class="strategy-list-status">
+                                {{.Company.MonthPeriod.CCI}}
+                            </p>
+                        </li>
+                        <li>
+                            Moving Average Convergence Divergence:
+                            <p class="strategy-list-status">
+                                {{.Company.MonthPeriod.MACD}}
+                            </p>
+                        </li>
+                        <li>
+                            Gann Consensus:
+                            <p class="strategy-list-status">
+                                {{.Company.MonthPeriod.GC}}
+                            </p>
+                        </li>
+                        <li>
+                            Volume Weighted Moving Average:
+                            <p class="strategy-list-status">
+                                {{.Company.MonthPeriod.VWMA}}
+                            </p>
+                        </li>
+                        <li>
+                            Balance Of Power:
+                            <p class="strategy-list-status">
+                                {{.Company.MonthPeriod.BOP}}
+                            </p>
+                        </li>
+                    </ul>
+                    {{else}}
+                    <p>No recommendation for this period</p>
+                    {{end}}
+                </div>
+            </div>
+        </main>
+    </body>
+</html>
