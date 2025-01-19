@@ -55,7 +55,7 @@ services:
     image: postgres
     container_name: stocktrust-db
     ports:
-      - 5432
+      - 5432:5432
     environment:
       - POSTGRES_PASSWORD=root
       - POSTGRES_USER=root
