@@ -1,0 +1,72 @@
+FROM ubuntu:latest
+
+# Install build dependencies
+RUN apt-get update && \
+    apt-get install -y \
+    curl \
+    git \
+    build-essential \
+    tar
+RUN apt update
+
+# Install Go
+RUN curl -sSL https://go.dev/dl/go1.23.5.linux-amd64.tar.gz -o /tmp/go1.23.5.linux-amd64.tar.gz
+RUN tar -C /usr/local -xzf /tmp/go1.23.5.linux-amd64.tar.gz
+RUN export PATH=$PATH:/usr/local/go/bin
+ENV PATH=$PATH:/usr/local/go/bin
+
+# Set application environment variables
+ENV PAGE_PORT=:8082
+ENV MSEMK_PORT=:8081
+ENV MSEMK_DOMAIN=127.0.0.1
+ENV MSEMK_VERSION=v1
+ENV DATABASE_USER=root
+ENV DATABASE_PASSWORD=root
+ENV DATABASE_HOST=127.0.0.1
+ENV DATABASE_PORT=5432
+ENV DATABASE_NAME=stocktrust
+ENV SCRAPE_PORT=:8083
+ENV NUM_THREADS=2
+
+WORKDIR /app
+
+# Copy Go source code
+COPY ./msemk /app/msemk
+COPY ./page /app/page
+COPY ./scraper /app/scraper
+
+
+# Build the services
+RUN cd /app/msemk && go build -o msemk main.go
+RUN cd /app/page && go build -o page main.go
+RUN cd /app/scraper && go build -o scraper main.go
+
+# Install Nginx
+RUN apt-get update && \
+    apt-get install -y \
+    nginx \
+    && rm -rf /var/lib/apt/lists/*
+
+# User for nginx
+RUN useradd nginx
+RUN usermod -aG nginx nginx
+
+# Config for nginx
+COPY ./dfnginx.conf /etc/nginx/nginx.conf
+
+# Install PostgreSQL
+RUN apt update -y
+RUN apt install postgresql -y
+
+# Copy database initialization script
+COPY ./init.db.sh /init.db.sh
+RUN chmod +x /init.db.sh
+
+# Expose port 80 for Nginx
+EXPOSE 80 5432
+
+WORKDIR /app/page
+
+# Start services with database initialization
+CMD /bin/bash -c "/app/msemk/msemk & /app/scraper/scraper & /app/page/page & nginx & /init.db.sh & tail -f /dev/null"
+# CMD /bin/bash -c "/app/msemk/msemk & /app/scraper/scraper & /app/page/page & nginx & su - postgres /init.db.sh & tail -f /dev/null"
