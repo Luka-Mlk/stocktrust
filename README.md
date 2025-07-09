@@ -1,5 +1,6 @@
 # Stocktrust
-Homework project for **Software Design and Architecture**
+Homework project for **Software Design and Architecture** where we scrape the Macedonian Stock Exchange website for historical data.
+Then the same data is used to compute strategies to help the end user with investment decisions
 
 ## Dependencies
 
