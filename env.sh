@@ -1,0 +1,6 @@
+export DATABASE_USER=root
+export DATABASE_PASSWORD=root
+export DATABASE_HOST=127.0.0.1
+export DATABAES_PORT=5432
+export DATABASE_NAME=stocktrust
+export NUM_THREADS=20
